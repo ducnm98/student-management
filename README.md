@@ -1,2 +1,2 @@
 # student-management
-Đây là đồ án môn học
+This is our project which manager students
