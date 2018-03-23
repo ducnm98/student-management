@@ -46,6 +46,14 @@ Student.prototype.hash = function() {
     }));
 };
 
+//Instance method for comparing password
+Student.prototype.compare = function(password, cb) {
+    bcrypt.compare(password, this.password, (err, result) => {
+        if (err) cb(null, err);
+        cb(result, null);
+    });
+}
+
 //Instance method for printing out values
 Student.prototype.sayStuff = function() {
     console.log(this.first_name);

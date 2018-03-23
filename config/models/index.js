@@ -19,10 +19,10 @@ const example = db.Student.build({
 });
 
 //Asynchronous instance method to hash the password
-example.hash();
+//example.hash();
 
-//Save into the database
-example.save();
+//Uncomment to save into the database
+//example.save();
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
