@@ -2,8 +2,7 @@ const bcrypt = require('bcrypt-nodejs');
 
 module.exports = (sequelize, DataTypes) => {
     const { STRING, SMALLINT, DATE, DATEONLY, NOW } = DataTypes;
-
-    //Model definition
+    // Model definition
     const Student = sequelize.define('student', 
     {
         id: {
@@ -18,18 +17,18 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         password: STRING,
-        gender: STRING(50),
+        gender: BOOLEAN, // Man is true, Woman is False
         birthday: DATEONLY,
         faculty: STRING(20),
         address: STRING,
-        phone_number: STRING(11),
+        phone_number: STRING(14),
         created_on: {
             type: DATE,
             defaultValue: NOW,
         },
     },
     {
-        //Options for model definition
+        // Options for model definition
         freezeTableName: true,
         paranoid: true,
         timestamps: false,
@@ -37,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 );
 
-//Instance method for hasing saved passwords
+// Instance method for hasing saved passwords
 Student.prototype.hash = function() {
     bcrypt.genSalt(12, ((err, salt) => {
         bcrypt.hash(this.password, salt, null, (err, result) => {
@@ -46,7 +45,7 @@ Student.prototype.hash = function() {
     }));
 };
 
-//Instance method for comparing password
+// Instance method for comparing password
 Student.prototype.compare = function(password, cb) {
     bcrypt.compare(password, this.password, (err, result) => {
         if (err) cb(null, err);
@@ -54,10 +53,9 @@ Student.prototype.compare = function(password, cb) {
     });
 }
 
-//Instance method for printing out values
+// Instance method for printing out values
 Student.prototype.sayStuff = function() {
     console.log(this.first_name);
 };
-
     return Student;
 }
