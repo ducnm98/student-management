@@ -1,9 +1,11 @@
-var express = require('express');
-var router = express.Router();
+var router = require('express').Router();
+//const Student = require('../config/models/index').Student;
+//const passport = require('passport');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  if (req.isAuthenticated()) res.render('index', { title: req.user.email });
+  else res.redirect('/login');
 });
 
 module.exports = router;
