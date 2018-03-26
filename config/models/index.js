@@ -11,7 +11,7 @@ const example = db.Student.build({
   last_name: "Doe",
   email: "johndoe@generic.com",
   password: "123",
-  gender: "Male",
+  gender: true,
   birthday: "1979-01-01",
   faculty: "IT",
   address: "123 Palm St. CA",

@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       password: STRING,
-      gender: BOOLEAN, // Man is true, Woman is False
+      gender: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      }, // Man is true, Woman is False
       birthday: DATEONLY,
       faculty: STRING(20),
       address: STRING,
