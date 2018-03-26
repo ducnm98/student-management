@@ -29,21 +29,15 @@ module.exports = passport => {
       },
       function(req, username, password, done) {
         Student.findOne({ where: { email: username } }).then((user, err) => {
-          if (err) {
-            return done("Error", false);
-          }
-          if (!user) {
-            return done("User not found", false);
-          } else {
-            user.compare(password, (result, error) => {
-              if (error) {
-                return done(error, null);
-              }
-              if (!result) {
-                return done("Invalid password", null);
-              }
-              return done(null, user);
+          if (err) return done(err, false);
+          if (user) {
+            user.compare(password, (result, err) => {
+              if (err) return done(err, false);
+              user.password = null;
+              if (result) return done(null, user);
             });
+          } else {
+            return done(null, false);
           }
         });
       }
