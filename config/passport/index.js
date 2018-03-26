@@ -16,7 +16,7 @@ module.exports = (passport) => {
         .then((result, err) => {
             done(err, result);
         })
-        .catch(error => done(null, error))
+        .catch(error => done(error, null))
     });
 
     //Define local login strategy

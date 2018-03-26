@@ -12,9 +12,6 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var login = require('./routes/login');
 
-//express-session configuration parameters
-const expressSessionConfig = require('./config/express-session/index');
-
 var app = express();
 
 // view engine setup
@@ -30,7 +27,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //express-session middleware
-app.use(session(expressSessionConfig));
+app.use(session({ 
+  secret: "Iambanana",  // session secret
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: false, /*Use 'true' without setting up HTTPS will result in redirect errors*/
+    maxAge: 24 * 60 * 60 * 1000 //1 day
+  } 
+}));
 
 //PassportJS middleware
 app.use(passport.initialize());
