@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt-nodejs");
 
 module.exports = (sequelize, DataTypes) => {
-  const { STRING, SMALLINT, DATE, DATEONLY, NOW } = DataTypes;
+  const { STRING, SMALLINT, DATE, DATEONLY, NOW, BOOLEAN } = DataTypes;
   // Model definition
   const Student = sequelize.define(
     "student",

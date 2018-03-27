@@ -2,7 +2,8 @@ const Sequelize = require("sequelize");
 const sequelize = require("../db/sequelize");
 
 const db = {
-  Student: sequelize.import("../models/Student")
+  Student: sequelize.import("../models/Student"),
+  Teacher: sequelize.import('../models/Teacher')
 };
 
 //Build object for later usage

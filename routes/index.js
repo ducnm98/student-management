@@ -4,8 +4,12 @@ var router = require('express').Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  res.redirect('/index');
+});
+
+router.get('/index', function(req, res, next) {
   if (req.isAuthenticated()) res.render('index', { title: req.user.email });
   else res.redirect('/login');
-});
+})
 
 module.exports = router;

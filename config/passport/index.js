@@ -2,10 +2,11 @@ const localStrategy = require("passport-local").Strategy;
 const models = require("../models/index");
 
 module.exports = passport => {
-  const { Student } = models;
+  const { Student, Teacher } = models;
 
   //Serialize user for session
   passport.serializeUser((user, done) => {
+    console.log("user serilization: ", user.id);
     done(null, user.id);
   });
 
@@ -13,6 +14,7 @@ module.exports = passport => {
   passport.deserializeUser((id, done) => {
     Student.findById(id)
       .then((result, err) => {
+        console.log("user DEserilization: ", id);
         done(err, result);
       })
       .catch(error => done(error, null));
@@ -30,23 +32,63 @@ module.exports = passport => {
       function(req, username, password, done) {
         Student.findOne({ where: { email: username } }).then((user, err) => {
           if (err) {
-            return done("Error", false);
+            //console.log("An error occured");
+            return done(null, false);
           }
           if (!user) {
-            return done("User not found", false);
+            //console.log("User not found");
+            return done(null, false);
           } else {
             user.compare(password, (result, error) => {
+              //console.log(result, error);
               if (error) {
-                return done(error, null);
+                //console.log("Error while comparing password");
+                return done(error, false);
               }
               if (!result) {
-                return done("Invalid password", null);
+                //console.log("Invalid password");
+                return done(null, false);
               }
+              console.log("Verification successful");
               return done(null, user);
             });
           }
         });
       }
     )
+  );
+
+  passport.use('local-register', 
+  new localStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+      passReqToCallback: true
+    },
+    function(req, username, password, done) {
+      Teacher.findOne({ where: { email: username } }).then((user, err) => {
+        if (err) return done(null, false);
+
+        if(user) { return done(null, false); }
+        else {
+          var userData = Teacher.build({
+            first_name: req.body.firstName,
+            last_name: req.body.lastName,
+            email: req.body.email,
+            password: req.body.password,
+          });
+    
+          userData.hash((result, error) => {
+            userData.password = result;
+            //console.log(userData.id, result);
+            userData.save()
+            .then((data, err) => {
+              return done(null, data);
+            });
+          });
+        }
+      });
+    }
+  )
   );
 };

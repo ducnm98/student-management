@@ -3,13 +3,15 @@ const passport = require('passport');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  if (req.isAuthenticated()) res.render('index', { title: req.user.email });
+  if (req.isAuthenticated()) {
+    //console.log("Logged in");
+    res.render('index', { title: req.user.email });
+  }
   else res.render('login');
-  next();
 });
 
 router.post('/', passport.authenticate('local-login', {
-  successRedirect: '/',
+  successRedirect: '/index',
   failureRedirect: '/login',
   failureFlash: false,
 }));
