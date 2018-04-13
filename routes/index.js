@@ -8,4 +8,8 @@ router.get('/', function(req, res, next) {
   else res.redirect('/login');
 });
 
+router.post('/', function(req, res, next){
+  res.render('users');
+})
+
 module.exports = router;
