@@ -30,10 +30,10 @@ module.exports = passport => {
         passwordField: "password",
         passReqToCallback: true
       },
-      function(req, username, password, done) {
+      function(req, email, password, done) {
         sequelize
           .query("SELECT * FROM `USERS` S WHERE S.email = :email", {
-            replacements: { email: username }
+            replacements: { email: email }
           })
           .then(user => {
             user = user[0];
