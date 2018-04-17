@@ -9,7 +9,7 @@
 
 // Connect to database in localhost
 module.exports = {
-  database: "nhapmoncongnghe",
+  database: "student_management",
   username: "root",
   password: "",
   host: "localhost",
