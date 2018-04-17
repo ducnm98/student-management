@@ -1,21 +1,25 @@
 const localStrategy = require("passport-local").Strategy;
-const models = require("../models/index");
+const sequelize = require("../db/sequelize");
+const bcrypt = require("bcrypt-nodejs");
 
 module.exports = passport => {
-  const { Student } = models;
-
   //Serialize user for session
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    let temp = JSON.parse(user);
+    done(null, temp.UserID);
   });
 
   //Deserialize user from session
   passport.deserializeUser((id, done) => {
-    Student.findById(id)
-      .then((result, err) => {
-        done(err, result);
+    sequelize
+      .query("SELECT * FROM `users` S WHERE S.UserID = :id", {
+        replacements: { id: `${id}` }
       })
-      .catch(error => done(error, null));
+      .then(user => {
+        let temp = JSON.parse(JSON.stringify(user[0]));
+        done(null, temp[0].UserID);
+      })
+      .catch(err => done(err, null));
   });
 
   //Define local login strategy
@@ -28,18 +32,27 @@ module.exports = passport => {
         passReqToCallback: true
       },
       function(req, username, password, done) {
-        Student.findOne({ where: { email: username } }).then((user, err) => {
-          if (err) return done(err, false);
-          if (user) {
-            user.compare(password, (result, err) => {
-              if (err) return done(err, false);
-              user.password = null;
-              if (result) return done(null, user);
+        sequelize
+          .query("SELECT * FROM `users` S WHERE S.email = :email", {
+            replacements: { email: username }
+          })
+          .then(user => {
+            user = user[0];
+            user.map(item => {
+              if (item) {
+                bcrypt.compare(password, item.Password, (err, isMatch) => {
+                  if (err) throw err;
+                  if (isMatch) {
+                    item.passpord = null;
+                    return done(null, JSON.stringify(item));
+                  }
+                });
+              } else {
+                return done(null, false);
+              }
             });
-          } else {
-            return done(null, false);
-          }
-        });
+          })
+          .catch(err => done(err, false));
       }
     )
   );
