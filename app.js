@@ -49,45 +49,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session()); //persistent login sessions
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser((user, done) => {
-  console.log(user);
-  sequelize
-    .query("SELECT * FROM `student` S WHERE S.id = :id", {
-      replacements: { id: user.id }
-    })
-    .then(user => {
-      done(null, user);
-    })
-    .catch(err => done(err, null));
-});
-
-passport.use('login',
-  new LocalStrategy((email, password, done) => {
-    console.log('aba');
-    sequelize
-      .query("SELECT * FROM `students` S WHERE S.email = :email", {
-        replacements: { email: username }
-      })
-      .then(user => {
-        user = user[0];
-        if (user) {
-          bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (err) throw err;
-            if (isMatch) {
-              user.password = null;
-              return done(null, user);
-            }
-          })
-        } else {
-          done(null, false);
-        }
-      });
-  })
-);
+require('./config/passport/index')(passport);
 
 app.use("/", index);
 app.use("/users", users);
