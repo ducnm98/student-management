@@ -5,17 +5,19 @@ const bcrypt = require("bcrypt-nodejs");
 module.exports = passport => {
   //Serialize user for session
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    let temp = JSON.parse(user);
+    done(null, temp.UserID);
   });
 
   //Deserialize user from session
   passport.deserializeUser((id, done) => {
     sequelize
-      .query("SELECT * FROM `student` S WHERE S.id = :id", {
+      .query("SELECT * FROM `users` S WHERE S.UserID = :id", {
         replacements: { id: `${id}` }
       })
       .then(user => {
-        done(null, users[0].id);
+        let temp = JSON.parse(JSON.stringify(user[0]));
+        done(null, temp[0].UserID);
       })
       .catch(err => done(err, null));
   });
@@ -30,22 +32,25 @@ module.exports = passport => {
         passReqToCallback: true
       },
       function(req, username, password, done) {
-        
         sequelize
-          .query("SELECT * FROM `student` S WHERE S.email = :email", {
+          .query("SELECT * FROM `users` S WHERE S.email = :email", {
             replacements: { email: username }
           })
           .then(user => {
             user = user[0];
-            if (user) {
-              bcrypt.compare(user.password, this.password, (err, result) => {
-                if (err) throw err;
-                user.passport = null;
-                return done(null, user);
-              });
-            } else {
-              return done(null, false);
-            }
+            user.map(item => {
+              if (item) {
+                bcrypt.compare(password, item.Password, (err, isMatch) => {
+                  if (err) throw err;
+                  if (isMatch) {
+                    item.passpord = null;
+                    return done(null, JSON.stringify(item));
+                  }
+                });
+              } else {
+                return done(null, false);
+              }
+            });
           })
           .catch(err => done(err, false));
       }
