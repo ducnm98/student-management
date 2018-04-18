@@ -4,9 +4,7 @@ var sequelize = require("../config/db/sequelize");
 /* GET home page. */
 router.get("/", (req, res) => {
   if (req.isAuthenticated()) {
-    console.log(req.user);
-    res.redirect("/");
-    
+    res.redirect("/dashboard"); 
   }
   else res.render("login");
 });

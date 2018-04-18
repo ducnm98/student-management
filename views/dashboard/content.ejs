@@ -1,0 +1,134 @@
+<div>
+  <div class="row justify-content-center">
+    <% if (role.viewStudents) { %>
+      <div class="col-md-3">
+        <div class="card bg-warning p-20">
+          <div class="media widget-ten">
+            <div class="media-above meida media-middle">
+              <span>
+                <i class="ti-user f-s-40"></i>
+              </span>
+            </div>
+            <div class="media-body media-text-right">
+              <h2 class="color-white">Học sinh</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <% if (role.viewClasses) { %>
+      <div class="col-md-3">
+        <div class="card bg-pink p-20">
+          <div class="media widget-ten">
+            <div class="media-left meida media-middle">
+              <span>
+                <i class="ti-clipboard f-s-40"></i>
+              </span>
+            </div>
+            <div class="media-body media-text-right">
+              <h2 class="color-white">Lớp học</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <% if (role.viewGrades) { %>
+      <div class="col-md-3">
+        <div class="card bg-success p-20">
+          <div class="media widget-ten">
+            <div class="media-left meida media-middle">
+              <span>
+                <i class="ti-bar-chart-alt f-s-40"></i>
+              </span>
+            </div>
+            <div class="media-body media-text-right">
+              <h2 class="color-white">Điểm số</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <% if (role.viewSubjects) { %>
+      <div class="col-md-3">
+        <div class="card bg-danger p-20">
+          <div class="media widget-ten">
+            <div class="media-left meida media-middle">
+              <span>
+                <i class="ti-bar-chart-alt f-s-40"></i>
+              </span>
+            </div>
+            <div class="media-body media-text-right">
+              <h2 class="color-white">Môn học</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+  <div class="row justify-content-center">
+    <% if (role.rentailRooms) { %>
+      <div class="col-md-3">
+        <div class="card bg-secondary p-20">
+          <div class="media widget-ten">
+            <div class="media-above meida media-middle">
+              <span>
+                <i class="ti-pencil-alt f-s-40"></i>
+              </span>
+            </div>
+            <div class="media-body media-text-right">
+              <h2 class="color-white">Mượn phòng học</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <% if (role.viewTeachers) { %>
+      <div class="col-md-3">
+        <div class="card bg-danger p-20">
+          <div class="media widget-ten">
+            <div class="media-left meida media-middle">
+              <span>
+                <i class="ti-id-badge f-s-40"></i>
+              </span>
+            </div>
+            <div class="media-body media-text-right">
+              <h2 class="color-white">Giáo viên</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <% if (role.viewReports) { %>
+      <div class="col-md-3">
+        <div class="card bg-primary p-20">
+          <div class="media widget-ten">
+            <div class="media-left meida media-middle">
+              <span>
+                <i class="ti-receipt f-s-40"></i>
+              </span>
+            </div>
+            <div class="media-body media-text-right">
+              <h2 class="color-white">Báo cáo</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <% if (role.viewEvents) { %>
+      <div class="col-md-3">
+        <div class="card bg-warning p-20">
+          <div class="media widget-ten">
+            <div class="media-above meida media-middle">
+              <span>
+                <i class="ti-user f-s-40"></i>
+              </span>
+            </div>
+            <div class="media-body media-text-right">
+              <h2 class="color-white">Các hoạt động</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
