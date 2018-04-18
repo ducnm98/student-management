@@ -3,7 +3,11 @@ const passport = require("passport");
 var sequelize = require("../config/db/sequelize");
 /* GET home page. */
 router.get("/", (req, res) => {
-  if (req.isAuthenticated()) res.redirect("/");
+  if (req.isAuthenticated()) {
+    console.log(req.user);
+    res.redirect("/");
+    
+  }
   else res.render("login");
 });
 

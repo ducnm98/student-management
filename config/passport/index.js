@@ -10,13 +10,21 @@ module.exports = passport => {
 
   //Deserialize user from session
   passport.deserializeUser((id, done) => {
+    // Search user info and role of this user then I merge 2 JSON object to return value of them
     sequelize
       .query("SELECT * FROM `USERS` S WHERE S.userID = :id", {
-        replacements: { id: `${id}` }
+        replacements: { id: id }
       })
       .then(user => {
-        let temp = JSON.parse(JSON.stringify(user[0]));
-        done(null, temp[0].userID);
+        user = JSON.parse(JSON.stringify(user[0]));
+        // To get more secure I hided user password
+        user[0].passpord = null;
+        sequelize.query("SELECT * FROM `ROLES` R WHERE R.roleID = :id", {
+          replacements: { id: user[0].roleID }
+        }).then(permission => {
+          permission = JSON.parse(JSON.stringify(permission[0]));
+          done(null, Object.assign(user[0], permission[0]));
+        });
       })
       .catch(err => done(err, null));
   });
