@@ -23,7 +23,8 @@ module.exports = passport => {
           replacements: { id: user[0].roleID }
         }).then(permission => {
           permission = JSON.parse(JSON.stringify(permission[0]));
-          done(null, Object.assign(user[0], permission[0]));
+          user[0].role = permission[0];
+          done(null, user[0]);
         });
       })
       .catch(err => done(err, null));
