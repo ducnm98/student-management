@@ -3,8 +3,12 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  console.log(req.body);
-  res.render('users');
+  if (req.isAuthenticated()) {
+    res.render('dashboard');
+  } else {
+    res.redirect('/login');
+  }
+  
 });
 
 module.exports = router;
