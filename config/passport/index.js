@@ -49,19 +49,18 @@ module.exports = passport => {
             replacements: { email: email }
           })
           .then(user => {
-            user[0].map(item => {
-              if (item) {
-                bcrypt.compare(password, item.password, (err, isMatch) => {
-                  if (err) console.log (err);
-                  if (isMatch) {
-                    item.password = null;
-                    return done(null, JSON.parse(JSON.stringify(item)));
-                  }
-                });
-              } else {
-                return done(null, false);
-              }
-            });
+            user = JSON.parse(JSON.stringify(user[0]))
+            if (user[0]) {
+              bcrypt.compare(password, item.password, (err, isMatch) => {
+                if (err) console.log (err);
+                if (isMatch) {
+                  item.password = null;
+                  return done(null, JSON.parse(JSON.stringify(item)));
+                }
+              });
+            } else {
+              return done(null, false);
+            }
           })
           .catch(err => done(err, false));
       }
