@@ -12,14 +12,14 @@ module.exports = passport => {
   passport.deserializeUser((id, done) => {
     // Search user info and role of this user then I merge 2 JSON object to return value of them
     sequelize
-      .query("SELECT * FROM `USERS` S WHERE S.userID = :id", {
+      .query("SELECT * FROM `users` S WHERE S.userID = :id", {
         replacements: { id: id }
       })
       .then(user => {
         user = JSON.parse(JSON.stringify(user[0]));
-        // To get more secure I hided user password
-        user[0].passpord = null;
-        sequelize.query("SELECT * FROM `ROLES` R WHERE R.roleID = :id", {
+        // Set user password to null for better security
+        user[0].password = null;
+        sequelize.query("SELECT * FROM `roles` R WHERE R.roleID = :id", {
           replacements: { id: user[0].roleID }
         }).then(permission => {
           permission = JSON.parse(JSON.stringify(permission[0]));
@@ -40,18 +40,21 @@ module.exports = passport => {
         passReqToCallback: true
       },
       function(req, email, password, done) {
+        //Set cookie expiration with option 'Remember Me'
+        if(req.body.rememberme) req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; //Expries after 30 days
+        else req.session.cookie.expires = false;
+
         sequelize
-          .query("SELECT * FROM `USERS` S WHERE S.email = :email", {
+          .query("SELECT * FROM `users` S WHERE S.email = :email", {
             replacements: { email: email }
           })
           .then(user => {
-            user = user[0];
-            user.map(item => {
+            user[0].map(item => {
               if (item) {
                 bcrypt.compare(password, item.password, (err, isMatch) => {
-                  if (err) throw err;
+                  if (err) console.log (err);
                   if (isMatch) {
-                    item.passpord = null;
+                    item.password = null;
                     return done(null, JSON.parse(JSON.stringify(item)));
                   }
                 });

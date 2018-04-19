@@ -5,16 +5,14 @@ var logger = require("morgan");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var session = require("express-session");
-var sequelize = require("./config/db/sequelize");
 var flash = require('connect-flash');
-var bcrypt = require('bcrypt-nodejs');
 var passport = require("passport");
-var LocalStrategy = require('passport-local').Strategy;
 
 //Routers imports for endpoints
 var index = require("./routes/index");
 var dashboard = require("./routes/dashboard");
 var login = require("./routes/login");
+var logout = require('./routes/logout');
 
 var app = express();
 
@@ -54,6 +52,7 @@ require('./config/passport/index')(passport);
 app.use("/", index);
 app.use("/dashboard", dashboard);
 app.use("/login", login);
+app.use("/logout", logout);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

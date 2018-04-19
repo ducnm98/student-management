@@ -1,6 +1,6 @@
 var router = require("express").Router();
 const passport = require("passport");
-var sequelize = require("../config/db/sequelize");
+
 /* GET home page. */
 router.get("/", (req, res) => {
   if (req.isAuthenticated()) {
