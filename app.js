@@ -5,13 +5,20 @@ var logger = require("morgan");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var session = require("express-session");
-var flash = require('connect-flash');
+var flash = require("connect-flash");
 var passport = require("passport");
 
 //Routers imports for endpoints
 var index = require("./routes/index");
 var dashboard = require("./routes/dashboard");
 var login = require("./routes/login");
+var student = require("./routes/student");
+var teacher = require("./routes/teacher");
+var room = require("./routes/room");
+var classes = require("./routes/class");
+var grade = require("./routes/grade");
+var activity = require("./routes/activity");
+var subject = require("./routes/subject");
 
 var app = express();
 
@@ -51,6 +58,17 @@ require('./config/passport/index')(passport);
 app.use("/", index);
 app.use("/dashboard", dashboard);
 app.use("/login", login);
+app.use("/student", student);
+app.use("/teacher", teacher);
+app.use("/activity", activity);
+app.use("/subject", subject);
+app.use("/class", classes);
+app.use("/room", room);
+app.use("/grade", grade);
+
+app.get("*", (req, res) => {
+  res.render("error/page-error-404");
+})
 
 // Logout function
 app.get("/logout", (req, res) => {
