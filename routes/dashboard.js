@@ -5,7 +5,7 @@ var router = express.Router();
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
     console.log(req.user);
-    res.render("dashboard/dashboard", { 
+    res.render("dashboard/index", { 
       role: req.user.role,
     });
   } else {
