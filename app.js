@@ -19,6 +19,8 @@ var classes = require("./routes/class");
 var grade = require("./routes/grade");
 var activity = require("./routes/activity");
 var subject = require("./routes/subject");
+var report = require("./routes/report");
+
 
 var app = express();
 
@@ -58,6 +60,7 @@ require('./config/passport/index')(passport);
 app.use("/", index);
 app.use("/dashboard", dashboard);
 app.use("/login", login);
+app.use("/report", report);
 app.use("/student", student);
 app.use("/teacher", teacher);
 app.use("/activity", activity);
