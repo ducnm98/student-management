@@ -52,7 +52,7 @@ module.exports = passport => {
             user = JSON.parse(JSON.stringify(user[0]));
             if (user[0]) {
               bcrypt.compare(password, user[0].password, (err, isMatch) => {
-                if (err) console.log (err);
+                if (err) throw (err);
                 if (isMatch) {
                   user[0].password = null;
                   return done(null, JSON.parse(JSON.stringify(user[0])));
