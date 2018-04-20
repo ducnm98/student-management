@@ -49,13 +49,15 @@ module.exports = passport => {
             replacements: { email: email }
           })
           .then(user => {
-            user = JSON.parse(JSON.stringify(user[0]))
+            user = JSON.parse(JSON.stringify(user[0]));
             if (user[0]) {
-              bcrypt.compare(password, item.password, (err, isMatch) => {
+              bcrypt.compare(password, user[0].password, (err, isMatch) => {
                 if (err) console.log (err);
                 if (isMatch) {
-                  item.password = null;
-                  return done(null, JSON.parse(JSON.stringify(item)));
+                  user[0].password = null;
+                  return done(null, JSON.parse(JSON.stringify(user[0])));
+                } else {
+                  return done(null, false);
                 }
               });
             } else {
