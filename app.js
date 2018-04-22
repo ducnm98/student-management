@@ -20,7 +20,7 @@ var grade = require("./routes/grade");
 var activity = require("./routes/activity");
 var subject = require("./routes/subject");
 var report = require("./routes/report");
-var userProfile = require("./routes/userProfile");
+var profile = require("./routes/profile");
 var controlRole = require("./routes/controlRole");
 
 
@@ -71,7 +71,7 @@ app.use("/class", classes);
 app.use("/room", room);
 app.use("/grade", grade);
 app.use("/role", controlRole);
-app.use("/user", userProfile);
+app.use("/profile", profile);
 
 app.get("*", (req, res) => {
   res.render("error/page-error-404");
