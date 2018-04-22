@@ -1,0 +1,110 @@
+<form action="/profile" method="POST">
+  <div class="form-body">
+    <h3 class="card-title m-t-15">Person Info</h3>
+    <hr>
+    <div class="row p-t-20">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="control-label">Họ và tên đệm</label>
+          <input type="text" id="firstName" class="form-control" placeholder="<%- profile.firstName %>" value="<%- profile.firstName %>" readonly>
+        </div>
+      </div>
+      <!--/span-->
+      <div class="col-md-6">
+        <div class="form-group has-danger">
+          <label class="control-label">Tên</label>
+          <input type="text" id="lastName" class="form-control form-control-danger" placeholder="<%- profile.lastName %>" value="<%- profile.lastName %>" readonly>
+        </div>
+      </div>
+      <!--/span-->
+    </div>
+    <!--/row-->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group has-success">
+          <label class="control-label">Gender</label>
+          <% if(profile.gender == 1) { %>
+            <select class="form-control custom-select">
+              <option value="male" selected>Male</option>
+              <option value="female">Female</option>
+            </select>
+          <% } else { %>
+            <select class="form-control custom-select">
+              <option value="male" selected>Male</option>
+              <option value="female">Female</option>
+            </select>
+          <% } %>
+        </div>
+      </div>
+      <!--/span-->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="control-label">Date of Birth</label>
+          <input class="form-control" placeholder="<%- profile.dateOfBirth %>" value="<%- profile.dateOfBirth %>" readonly>
+        </div>
+      </div>
+      <!--/span-->
+    </div>
+    <!--/row-->
+    <div class="row">
+      <div class="col-md-12 ">
+        <div class="form-group">
+          <label>Địa chỉ</label>
+          <input type="text" class="form-control" placeholder="<%- profile.address %>" value="<%- profile.address %>" readonly>
+        </div>
+      </div>
+    </div>
+    <!--/row-->
+    <div class="row p-t-20">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="control-label">Ngày bắt đầu làm việc</label>
+          <input type="text" id="startDate" class="form-control" placeholder="<%- profile.contractStartDate %>" value="<%- profile.contractStartDate %>" readonly>
+        </div>
+      </div>
+      <!--/span-->
+      <div class="col-md-6">
+        <div class="form-group has-danger">
+          <label class="control-label">Số điện thoại cá nhân</label>
+          <input type="text" id="telephone" class="form-control form-control-danger" placeholder="<%- profile.telephone %>" value="<%- profile.telephone %>">
+        </div>
+      </div>
+      <!--/span-->
+    </div>
+    <!--/row-->
+    <h3 class="card-title m-t-15">Thông tin nhân viên</h3>
+    <hr>
+    <div class="row p-t-20">
+      <div class="col-md-6">
+        <div class="form-group has-success">
+          <label class="control-label">Loại nhân viên</label>
+          <% if(profile.employeeType == 'teacher') { %>
+            <select class="form-control custom-select">
+              <option value="teacher" selected>Giáo viên</option>
+              <option value="supervisor">Giám thị</option>
+            </select>
+          <% } else { %>
+            <select class="form-control custom-select">
+                <option value="teacher">Giáo viên</option>
+                <option value="supervisor" selected>Giám thị</option>
+            </select>
+          <% } %>
+        </div>
+      </div>
+      <!--/span-->
+      <div class="col-md-6">
+        <div class="form-group has-danger">
+          <label class="control-label"> Lương </label>
+          <input type="text" id="salary" class="form-control form-control-danger" placeholder="<%- profile.salary %>" value="<%- profile.salary %>" readonly>
+        </div>
+      </div>
+      <!--/span-->
+    </div>
+    <!--/row-->
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-success">
+      <i class="fa fa-check"></i> Save</button>
+    <button type="button" class="btn btn-inverse">Cancel</button>
+  </div>
+</form>
