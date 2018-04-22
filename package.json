@@ -20,7 +20,8 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "sequelize": "^4.37.4",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "standard": "^11.0.1"
   },
   "devDependencies": {
     "eslint-config-airbnb-base": "^12.1.0",
