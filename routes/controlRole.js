@@ -24,9 +24,9 @@ router.get("/:personID", (req, res, next) => {
             personID: req.params.personID,
           }
         }).then(roleInfo => {
-          var col = [];
-          for (var i = 0; i < roleInfo.length; i++) {
-              for (var key in roleInfo[i]) {
+          let col = [];
+          for (let i = 0; i < roleInfo.length; i++) {
+              for (let key in roleInfo[i]) {
                   if (col.indexOf(key) === -1) {
                       col.push(key);
                   }
