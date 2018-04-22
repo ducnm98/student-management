@@ -1,7 +1,6 @@
 var router = require("express").Router();
 var sequelize = require("../config/db/sequelize");
 
-/* GET home page. */
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
     res.render("role/index", {showRole: false});

@@ -1,7 +1,6 @@
 var router = require("express").Router();
 const passport = require("passport");
 
-/* GET home page. */
 router.get("/", (req, res) => {
   if (req.isAuthenticated()) {
     res.redirect("/dashboard"); 
