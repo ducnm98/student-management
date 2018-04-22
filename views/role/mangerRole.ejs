@@ -1,0 +1,40 @@
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">Quyền truy cập của người dùng:
+      <%- person.firstName %>
+        <%- person.lastName %> [<%- person.personID %>]</h4>
+    <div class="table-responsive m-t-40">
+      <table class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Tên chức năng</th>
+            <th>Giá trị</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>STT</th>
+            <th>Tên chức năng</th>
+            <th>Giá trị</th>
+          </tr>
+        </tfoot>
+        <tbody>
+          <% for(var i = 1; i < col.length; i++) { %>
+            <tr>
+              <td>
+                <%- i %>
+              </td>
+              <td>
+                <%- col[i] %>
+              </td>
+              <td>
+                <%- roleInfo[col[i]] %>
+              </td>
+            </tr>
+            <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

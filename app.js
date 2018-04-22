@@ -20,6 +20,7 @@ var grade = require("./routes/grade");
 var activity = require("./routes/activity");
 var subject = require("./routes/subject");
 var report = require("./routes/report");
+var controlRole = require("./routes/controlRole");
 
 
 var app = express();
@@ -68,6 +69,7 @@ app.use("/subject", subject);
 app.use("/class", classes);
 app.use("/room", room);
 app.use("/grade", grade);
+app.use("/role", controlRole);
 
 app.get("*", (req, res) => {
   res.render("error/page-error-404");
