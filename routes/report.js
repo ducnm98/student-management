@@ -4,7 +4,7 @@ var sequelize = require("../config/db/sequelize");
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (!req.isAuthenticated()) {
     console.log(req.user);
     res.render("report/index");
   } else {
