@@ -22,16 +22,16 @@
     <div class="row">
       <div class="col-md-6">
         <div class="form-group has-success">
-          <label class="control-label">Gender</label>
+          <label class="control-label">Giới tính</label>
           <% if(profile.gender == 1) { %>
             <select class="form-control custom-select">
-              <option value="male" selected>Male</option>
-              <option value="female">Female</option>
+              <option value="male" selected>Nam</option>
+              <option value="female">Nữ</option>
             </select>
           <% } else { %>
             <select class="form-control custom-select">
-              <option value="male" selected>Male</option>
-              <option value="female">Female</option>
+              <option value="male" selected>Nam</option>
+              <option value="female">Nữ</option>
             </select>
           <% } %>
         </div>
@@ -39,7 +39,7 @@
       <!--/span-->
       <div class="col-md-6">
         <div class="form-group">
-          <label class="control-label">Date of Birth</label>
+          <label class="control-label">Ngày tháng năm sinh</label>
           <input class="form-control" placeholder="<%- profile.dateOfBirth %>" value="<%- profile.dateOfBirth %>" readonly>
         </div>
       </div>
@@ -104,7 +104,7 @@
   </div>
   <div class="form-actions">
     <button type="submit" class="btn btn-success">
-      <i class="fa fa-check"></i> Save</button>
+      <i class="fa fa-check"></i> Lưu thông tin</button>
     <button type="button" class="btn btn-inverse">Cancel</button>
   </div>
 </form>
