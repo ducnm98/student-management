@@ -53,6 +53,13 @@
                 <p class="text-muted m-b-15 f-s-12">Nhập họ tên học sinh muốn hiện thông tin</p>
                 <div class="input-group input-group-rounded">
                   <input type="text" placeholder="Nhập họ tên học sinh bạn muốn tìm thông tin" name="personName" class="form-control">
+                  <select name="academicYearID" class="form-control custom-select">
+                    <% for(let i = 0; i < academicYear.length; i++) { %>
+                      <% let year = new Date(academicYear[i]['academicYear']).getFullYear() %>
+                      <% let semester = academicYear[i]['semester'] %>
+                      <option value=<%- academicYear[i]['academicYearID'] %>> Năm học: <%- year %> - <%- year+1 %> || Học kỳ <%- semester %> </option>
+                    <% } %>
+                  </select>
                   <span class="input-group-btn">
                     <button class="btn btn-primary btn-group-right" type="submit">
                       <i class="ti-search"></i>

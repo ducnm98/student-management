@@ -53,7 +53,7 @@ CREATE TABLE `rooms`(
 );
 
 CREATE TABLE `academicYear` (
-    `academicYearID` INT(4) NOT NULL,
+    `academicYearID` INT(4) NOT NULL AUTO_INCREMENT,
     `academicYear` DATE,
     `semester` INT(2),
     PRIMARY KEY (`academicYearID`)
@@ -112,7 +112,7 @@ CREATE TABLE `subjects`(
     `subjectName` VARCHAR(20),
     `teacherID` VARCHAR(50) NOT NULL,
     `semester` SMALLINT(2),
-    `academicYearID` INT(4),
+    `academicYearID` INT(4) NOT NULL,
     PRIMARY KEY (`subjectID`, `teacherID`),
     CONSTRAINT fk_subjects_teachers FOREIGN KEY (`teacherID`) REFERENCES `teachers`(`teacherID`),
     CONSTRAINT fk_subjects_academicYearID FOREIGN KEY (`academicYearID`) REFERENCES `academicYear`(`academicYearID`)
@@ -122,7 +122,7 @@ CREATE TABLE `grades`(
     `gradeID` VARCHAR(50) NOT NULL,
     `studentID` VARCHAR(50) NOT NULL,
     `subjectID` VARCHAR(50) NOT NULL,
-    `academicYearID` INT(4),
+    `academicYearID` INT(4) NOT NULL,
     `oralScore` FLOAT(2, 2),
     `fifteenMinutesScore` FLOAT(2, 2),
     `periodScore` FLOAT(2, 2),
@@ -276,15 +276,27 @@ END;
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE findStudentByName(personName varchar(50)) 
+CREATE PROCEDURE findStudentDetailByName(personName varchar(50)) 
 BEGIN 
     SELECT * 
     FROM `persons` P 
     INNER JOIN `students` S ON P.personID = S.studentID
     INNER JOIN `studiesat` SA ON S.studentID = SA.studentID
     INNER JOIN `classes` C ON C.classID = SA.classID
-    WHERE P.firstName LIKE CONCAT('%', personName , '%')
-    OR P.lastName LIKE CONCAT('%', personName , '%');
-END
+    INNER JOIN `academicyear`A ON A.academicYearID = C.academicYearID
+    WHERE P.name LIKE CONCAT('%', personName , '%')
+    AND A.academicYearID = academicYearID;
+END;
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE findAcademicYear() 
+BEGIN 
+    SELECT * 
+    FROM `academicYear` A
+    ORDER BY YEAR(A.academicYear), A.semester DESC
+    LIMIT 6;
+END;
  $$
 DELIMITER ;
