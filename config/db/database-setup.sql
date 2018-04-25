@@ -276,7 +276,7 @@ END;
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE findStudentDetailByName(personName varchar(50)) 
+CREATE PROCEDURE findStudentDetailByName(personName varchar(50), academicYearID INT) 
 BEGIN 
     SELECT * 
     FROM `persons` P 
