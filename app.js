@@ -8,6 +8,8 @@ var session = require("express-session");
 var flash = require("connect-flash");
 var passport = require("passport");
 
+var sequelize = require("./config/db/sequelize");
+
 //Routers imports for endpoints
 var index = require("./routes/index");
 var dashboard = require("./routes/dashboard");
@@ -73,15 +75,22 @@ app.use("/grade", grade);
 app.use("/role", controlRole);
 app.use("/profile", profile);
 
+// Logout function
+app.get("/logout", (req, res) => {
+  sequelize.query("UPDATE `loginactivity` SET `isLoginOut` = '1', `logOutDate` = CURRENT_TIMESTAMP WHERE `loginactivity`.`loginActivityID` = :loginActivityID AND `loginactivity`.`userID` = :userID;", {
+    replacements: {
+      loginActivityID: req.user.session[0],
+      userID: req.user.session[1],
+    }
+  })
+  req.logout();
+  
+  res.redirect("/login");
+});
+
 app.get("*", (req, res) => {
   res.render("error/page-error-404");
 })
-
-// Logout function
-app.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/login");
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -214,6 +214,7 @@ CREATE TABLE `loginActivity` (
     `loginActivityID` INT(10) NOT NULL AUTO_INCREMENT,
     `userID` INT NOT NULL,
     `logInDate` DATETIME DEFAULT NOW(),
+    `isLoginOut` TINYINT(1) DEFAULT 0,
     `logOutDate` DATETIME,
     PRIMARY KEY (`loginActivityID` ,`userID`),
     CONSTRAINT fk_loginactivities_users FOREIGN KEY (`userID`) REFERENCES `users`(`userID`)
