@@ -35,18 +35,18 @@ module.exports = passport => {
     "local-login",
     new localStrategy(
       {
-        usernameField: "email",
+        usernameField: "identifyCard",
         passwordField: "password",
         passReqToCallback: true
       },
-      function(req, email, password, done) {
+      function(req, identifyCard, password, done) {
         //Set cookie expiration with option 'Remember Me'
         if(req.body.rememberme) req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; //Expries after 30 days
         else req.session.cookie.expires = false;
 
         sequelize
-          .query("SELECT * FROM `users` S WHERE S.email = :email", {
-            replacements: { email: email }
+          .query("SELECT * FROM `users` S WHERE S.personID = :identifyCard", {
+            replacements: { identifyCard: identifyCard }
           })
           .then(user => {
             user = JSON.parse(JSON.stringify(user[0]));
