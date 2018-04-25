@@ -2,9 +2,8 @@ CREATE DATABASE IF NOT EXISTS `student_management`;
 ALTER DATABASE `student_management` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE `persons`(
-    `personID`  VARCHAR(50)   NOT NULL, -- Is a Identify Card
-    `firstName` VARCHAR(150)  NOT NULL,
-    `lastName` VARCHAR(150)   NOT NULL,
+    `personID`  VARCHAR(50)   NOT NULL AUTO_INCREMENT, -- Is a Identify Card
+    `name` VARCHAR(150)  NOT NULL,
     `gender` TINYINT(1),
     `dateOfBirth` DATE,
     `telephone` VARCHAR(11),
@@ -65,6 +64,7 @@ CREATE TABLE `classes`(
     `roomID` VARCHAR(50)        NOT NULL,
     `mainTeacherID` VARCHAR(50) NOT NULL,
     `academicYearID` INT(4)     NOT NULL,
+    `className` VARCHAR(50),
     `level` INT(2) DEFAULT 10,
     `noOfStudents` INT(3),
     PRIMARY KEY (`classID`),
@@ -272,5 +272,19 @@ BEGIN
     END;
     END IF;
 END;
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE findStudentByName(personName varchar(50)) 
+BEGIN 
+    SELECT * 
+    FROM `persons` P 
+    INNER JOIN `students` S ON P.personID = S.studentID
+    INNER JOIN `studiesat` SA ON S.studentID = SA.studentID
+    INNER JOIN `classes` C ON C.classID = SA.classID
+    WHERE P.firstName LIKE CONCAT('%', personName , '%')
+    OR P.lastName LIKE CONCAT('%', personName , '%');
+END
  $$
 DELIMITER ;
