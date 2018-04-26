@@ -78,33 +78,33 @@
                     <% listOfClass.map(item => { %>
                       <div class="col-lg-3">
                         <div class="card">
-                          <div class="card-title">
-                            <h4>Lớp: <%- item.className %></h4>
-                          </div>
-                          <div class="button-list">
-                            <p class="text-muted m-b-15">
-                              <small>Giáo viên chủ nhiệm: </small>
-                            </p>
-                            <p class="text-muted m-b-15">
-                              <small>Lớp trưởng:</small>
-                            </p>
-                          </div>
+                          <a href="/class/<%- khoi %>/<%- year %>/<%- item.classID %>">
+                            <div class="card-title">
+                              <h4>Lớp:
+                                <%- item.className %>
+                              </h4>
+                            </div>
+                            <div class="button-list">
+                              <p class="text-muted m-b-15">
+                                <small>Giáo viên chủ nhiệm:</small>
+                                <%- item.name %>
+                              </p>
+                              <p class="text-muted m-b-15">
+                                <small>Sỉ số lớp:</small>
+                                <%- item.noOfStudents %>
+                              </p>
+                            </div>
+                          </a>
                         </div>
                         <!-- /# card -->
                       </div>
                       <!-- /# column -->
-                    <% }) %>
+                      <% }) %>
                   </div>
                   <% } %>
-
-
-
-
-
-
-                    <!-- footer -->
-                    <%- include('../partials/footer') %>
-                      <!-- End footer -->
+            <!-- footer -->
+            <%- include('../partials/footer') %>
+            <!-- End footer -->
           </div>
           <!-- End Page wrapper  -->
         </div>

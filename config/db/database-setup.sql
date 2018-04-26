@@ -59,18 +59,24 @@ CREATE TABLE `academicYear` (
     PRIMARY KEY (`academicYearID`)
 );
 
+CREATE TABLE `classHasAcademicYear` (
+    `academicYearID` INT(4) NOT NULL,
+    `classID` VARCHAR(50)   NOT NULL,
+    PRIMARY KEY (`academicYearID`, `classID`),
+    CONSTRAINT fk_classHasAcademicYear_classID FOREIGN KEY (`classID`) REFERENCES `classes`(`classID`),
+    CONSTRAINT fk_classHasAcademicYear_academicYear FOREIGN KEY (`academicYearID`) REFERENCES `academicYear`(`academicYearID`)
+);
+
 CREATE TABLE `classes`(
     `classID` VARCHAR(50)       NOT NULL,
     `roomID` VARCHAR(50)        NOT NULL,
     `mainTeacherID` VARCHAR(50) NOT NULL,
-    `academicYearID` INT(4)     NOT NULL,
     `className` VARCHAR(50),
     `level` INT(2) DEFAULT 10,
     `noOfStudents` INT(3),
     PRIMARY KEY (`classID`),
     CONSTRAINT fk_classes_rooms FOREIGN KEY (`roomID`) REFERENCES `rooms`(`roomID`),
-    CONSTRAINT fk_classes_teachers FOREIGN KEY (`mainTeacherID`) REFERENCES `teachers`(`teacherID`),
-    CONSTRAINT fk_classsess_academicYearID FOREIGN KEY (`academicYearID`) REFERENCES `academicYear`(`academicYearID`)
+    CONSTRAINT fk_classes_teachers FOREIGN KEY (`mainTeacherID`) REFERENCES `teachers`(`teacherID`)
 );
 
 CREATE TABLE `studiesAt`(
@@ -302,16 +308,47 @@ END;
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE showClassOfAcademic(academicYear INT, levelClass INT) 
+CREATE PROCEDURE showClassDetailWithYear(academicYear INT, levelClass INT) 
 BEGIN 
     SELECT *
     FROM `classes` C
+    INNER JOIN `persons` P ON P.personID = C.mainTeacherID
+    INNER JOIN `teachers` T ON T.teacherID = P.personID
     WHERE C.level = levelClass
-    AND C.academicYearID IN (
-        SELECT AC.academicYearID
-        FROM `academicYear` AC
-        WHERE YEAR(AC.academicYear) = academicYear
+    AND C.classID IN (
+        SELECT CA.classID
+        FROM `classHasAcademicYear` CA
+        INNER JOIN `academicYear` AY ON CA.academicYearID = AY.academicYearID
+
+        WHERE YEAR(AY.academicYear) = academicYear
     );
+END;
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE findStudentStudyAtClass(classID VARCHAR(50)) 
+BEGIN 
+    SELECT *
+    FROM `persons` P
+    INNER JOIN `students` S ON S.studentID = P.personID
+    WHERE P.personID IN (
+        SELECT S.studentID
+        FROM `studiesAt` S
+        WHERE S.classID = classID
+    );
+END;
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE findClassDetail(classID VARCHAR(50)) 
+BEGIN 
+    SELECT *
+    FROM `classes` C
+    INNER JOIN `persons` P ON P.personID = C.mainTeacherID
+    INNER JOIN `teachers` T ON T.teacherID = P.personID
+    WHERE C.classID = classID;
 END;
  $$
 DELIMITER ;

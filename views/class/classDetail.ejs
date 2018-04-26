@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- Favicon icon -->
+  <title>Lớp <%- classDetail.className %></title>
+  <%- include('../partials/stylesheet') %>
+</head>
+
+<body class="fix-header fix-sidebar">
+  <!-- Preloader - style you can find in spinners.css -->
+  <div class="preloader">
+    <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+  </div>
+  <!-- Main wrapper  -->
+  <div id="main-wrapper">
+    <!-- header header  -->
+    <%- include('../partials/header') %>
+      <!-- End header header -->
+
+      <!-- Left Sidebar  -->
+      <%- include('../partials/menu')%>
+        <!-- End Left Sidebar  -->
+        <!-- Page wrapper  -->
+        <div class="page-wrapper">
+          <!-- Bread crumb -->
+          <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+              <h3 class="text-primary">Class</h3>
+            </div>
+            <div class="col-md-7 align-self-center">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  Home
+                </li>
+                <li class="breadcrumb-item active">Class</li>
+                <li class="breadcrumb-item active">Lớp <%- classDetail.className %></li>
+              </ol>
+            </div>
+          </div>
+          <!-- End Bread crumb -->
+          <!-- Container fluid  -->
+          <div class="container-fluid">
+            <!-- Start Page Content -->
+
+            <div class="card">
+              <div class="card-title">
+                <h4>Danh sách học sinh</h4>
+              </div>
+              <div class="header-detail">
+                  <h4>Lớp: <%- classDetail.className %></h4>
+                  <h4>Giáo viên chủ nhiệm: <%- classDetail.name %></h4>
+                  <h4>Sỉ số lớp: <%- classDetail.noOfStudents %></h4>
+                  <h4>Năm học: <%- year %> - <%- year + 1 %></h4>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="display nowrap table table-hover table-striped table-bordered" id="example23">
+                    <thead>
+                      <tr>
+                        <th>STT</th>
+                        <th>Họ và tên</th>
+                        <th>Giới tính</th>
+                        <th>Ngày tháng năm sinh</th>
+                        <th>Thông tin phụ huynh</th>
+                        <th>Số điện thoại</th>
+                        <th>Số ngày nghỉ học</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% for (let i = 0; i < student.length; i++) { %>
+                        <tr>
+                            <td><%- i+1 %></td>
+                            <td><%- student[i].name %></td>
+                            <% let gender = 'Nữ' %>
+                            <% if(student[i].gender == 1) {gener = 'Name'}%>
+                            <td>
+                              <span><%- gender %></span>
+                            </td>
+                            <% let birthday = new Date(student[i].dateOfBirth) %>
+                            <td>
+                              <span><%- birthday.getDate() %>/<%- birthday.getMonth() + 1 %>/<%- birthday.getFullYear() %></span>
+                            </td>
+                            <td>
+                                <span><%- student[i].parentalName %></span>
+                              </td>
+                            <td>
+                              <span><%- student[i].parentalTelephone %></span>
+                            </td>
+                            <td>
+                              <span class="badge badge-success">Done</span>
+                            </td>
+                          </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+            <!-- footer -->
+            <%- include('../partials/footer') %>
+              <!-- End footer -->
+          </div>
+          <!-- End Page wrapper  -->
+        </div>
+        <%- include('../partials/scripts') %>
+        <script src="/js/lib/datatables/datatables.min.js"></script>
+        <script src="/js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+        <script src="/js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+        <script src="/js/lib/datatables/cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+        <script src="/js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+        <script src="/js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+        <script src="/js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+        <script src="/js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+        <script src="/js/lib/datatables/datatables-init.js"></script>
+
+</body>
+
+</html>

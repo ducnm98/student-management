@@ -31,7 +31,7 @@ function findAcademicYear(callback) {
       }
     }
   });
-}
+};
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
@@ -56,23 +56,49 @@ router.get("/:level", function(req, res, next) {
 });
 
 router.get("/:level/:academicYear", function(req, res, next) {
-  if (!req.isAuthenticated()) {
-    sequelize.query("CALL `showClassOfAcademic`(:academicYear, :levelClass)", {
+  if (req.isAuthenticated()) {
+    sequelize.query("CALL `showClassDetailWithYear`(:academicYear, :levelClass)", {
       replacements: {
         academicYear: req.params.academicYear,
         levelClass: req.params.level,
       }
     }).then(listOfClass => {
       listOfClass = JSON.parse(JSON.stringify(listOfClass));
-      console.log(listOfClass)
-      findAcademicYear(academicYear => {
-        res.render("class/level", {
-          khoi: req.params.level,
-          academicYear: academicYear,
-          listOfClass: listOfClass,
-          hasListOfClass: true,
+        findAcademicYear(academicYear => {
+          res.render("class/level", {
+            khoi: req.params.level,
+            year: req.params.academicYear,
+            academicYear: academicYear,
+            listOfClass: listOfClass,
+            hasListOfClass: true,
+          });
         });
-      });
+    })
+  } else {
+    res.redirect("/login");
+  }
+});
+
+router.get("/:level/:academicYear/:classID", function(req, res, next) {
+  if (req.isAuthenticated()) {
+    sequelize.query("CALL `findClassDetail`(:classID)", {
+      replacements: {
+        classID: req.params.classID
+      }
+    }).then(classDetail => {
+      classDetail = JSON.parse(JSON.stringify(classDetail[0]));
+      sequelize.query("CALL `findStudentStudyAtClass`(:classID)", {
+        replacements: {
+          classID: req.params.classID,
+        }
+      }).then(data => {
+        data = JSON.parse(JSON.stringify(data));
+        res.render("class/classDetail", {
+          classDetail: classDetail,
+          student: data,
+          year: parseInt(req.params.academicYear),
+        })
+      })
     })
   } else {
     res.redirect("/login");
