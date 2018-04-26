@@ -42,19 +42,38 @@ router.get("/", function(req, res, next) {
 });
 
 router.get("/:level", function(req, res, next) {
-
-
-  if (!req.isAuthenticated()) {
+  if (req.isAuthenticated()) {
     findAcademicYear(academicYear => {
-      academicYear.map(item => {
-        console.log(item)  
-      })
-      console.log('academicYear', academicYear)
       res.render("class/level", {
         khoi: req.params.level,
-        academicYear: academicYear
+        academicYear: academicYear,
+        hasListOfClass: false,
       });
     });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+router.get("/:level/:academicYear", function(req, res, next) {
+  if (!req.isAuthenticated()) {
+    sequelize.query("CALL `showClassOfAcademic`(:academicYear, :levelClass)", {
+      replacements: {
+        academicYear: req.params.academicYear,
+        levelClass: req.params.level,
+      }
+    }).then(listOfClass => {
+      listOfClass = JSON.parse(JSON.stringify(listOfClass));
+      console.log(listOfClass)
+      findAcademicYear(academicYear => {
+        res.render("class/level", {
+          khoi: req.params.level,
+          academicYear: academicYear,
+          listOfClass: listOfClass,
+          hasListOfClass: true,
+        });
+      });
+    })
   } else {
     res.redirect("/login");
   }

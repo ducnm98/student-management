@@ -300,3 +300,18 @@ BEGIN
 END;
  $$
 DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE showClassOfAcademic(academicYear INT, levelClass INT) 
+BEGIN 
+    SELECT *
+    FROM `classes` C
+    WHERE C.level = levelClass
+    AND C.academicYearID IN (
+        SELECT AC.academicYearID
+        FROM `academicYear` AC
+        WHERE YEAR(AC.academicYear) = academicYear
+    );
+END;
+ $$
+DELIMITER ;
