@@ -8,7 +8,7 @@ function findAcademicYear(callback) {
     let final = [];
     result.forEach((item, index) => {
       item.academicYear = new Date(item.academicYear).getFullYear();
-      if (!final.includes(item.academicYear)) {
+      if (final.includes(item.academicYear)) {
         final.push(item.academicYear);
         year.push({
           academicYear: item.academicYear,
@@ -57,7 +57,7 @@ router.get("/", function(req, res, next) {
 });
 
 router.get("/:level", function(req, res, next) {
-  if (!req.isAuthenticated()) {
+  if (req.isAuthenticated()) {
     findAcademicYear(academicYear => {
       res.render("class/level", {
         khoi: req.params.level,
