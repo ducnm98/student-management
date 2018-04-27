@@ -75,30 +75,30 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <% for (let i = 0; i < student.length; i++) { %>
+                      <% student.map((data, i) => { %>
                         <tr>
                             <td><%- i+1 %></td>
-                            <td><%- student[i].name %></td>
+                            <td><%- data.name %></td>
                             <% let gender = 'Nữ' %>
-                            <% if(student[i].gender == 1) {gener = 'Name'}%>
+                            <% if(data.gender == 1) {gender = 'Nam'}%>
                             <td>
                               <span><%- gender %></span>
                             </td>
-                            <% let birthday = new Date(student[i].dateOfBirth) %>
+                            <% let birthday = new Date(data.dateOfBirth) %>
                             <td>
                               <span><%- birthday.getDate() %>/<%- birthday.getMonth() + 1 %>/<%- birthday.getFullYear() %></span>
                             </td>
                             <td>
-                                <span><%- student[i].parentalName %></span>
+                                <span><%- data.parentalName %></span>
                               </td>
                             <td>
-                              <span><%- student[i].parentalTelephone %></span>
+                              <span><%- data.parentalTelephone %></span>
                             </td>
                             <td>
                               <span class="badge badge-success">Done</span>
                             </td>
                           </tr>
-                      <% } %>
+                      <% }) %>
                     </tbody>
                   </table>
                 </div>

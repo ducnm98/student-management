@@ -8,7 +8,7 @@ function findAcademicYear(callback) {
     let final = [];
     result.forEach((item, index) => {
       item.academicYear = new Date(item.academicYear).getFullYear();
-      if (final.includes(item.academicYear)) {
+      if (!final.includes(item.academicYear)) {
         final.push(item.academicYear);
         year.push({
           academicYear: item.academicYear,
