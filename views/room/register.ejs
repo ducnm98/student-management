@@ -1,0 +1,77 @@
+<div class="card-body">
+  <% if(hasSubmit) { %> 
+    <form action="/room/register" method="POST">
+  <% } else { %>
+    <form action="/room" method="POST">
+  <% } %>
+    <div class="form-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group has-success">
+            <label class="control-label">Lý do mượn phòng</label>
+            <select class="form-control custom-select" name="recipientType">
+              <% if(recipientType == 'meeting') { %>               
+                <option value="meeting" selected>Họp lớp</option>
+                <option value="studies">Học nhóm</option>
+                <option value="activities">Tổ chức hoạt động</option>
+                <option value="others">Khác</option>
+              <% } else %>
+              <% if(recipientType == 'studies') { %>               
+                <option value="studies" selected>Học nhóm</option>
+                <option value="meeting">Họp lớp</option>
+                 <option value="activities">Tổ chức hoạt động</option>
+                 <option value="others">Khác</option>
+              <% } else %>
+              <% if(recipientType == 'activities') { %>               
+                <option value="activities" selected>Tổ chức hoạt động</option>
+                <option value="meeting">Họp lớp</option>
+                <option value="studies">Học nhóm</option>
+                <option value="others">Khác</option>
+              <% } else %>
+              <% if(recipientType == 'others') { %>               
+                <option value="others" selected>Khác</option>
+                <option value="meeting">Họp lớp</option>
+                <option value="studies">Học nhóm</option>
+                <option value="activities">Tổ chức hoạt động</option>
+              <% } else { %> 
+                <option value="meeting">Họp lớp</option>
+                <option value="studies">Học nhóm</option>
+                <option value="activities">Tổ chức hoạt động</option>
+                <option value="others">Khác</option>  
+              <%}%>
+              
+            </select>
+          </div>
+        </div>
+        <!--/span-->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label">Ngày mượn phòng</label>
+            <input type="date" class="form-control" name="registerDate" value=<%- registerDate %> >
+          </div>
+        </div>
+        <!--/span-->
+      </div>
+      <!--/row-->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Ghi chú</label>
+            <input type="text" class="form-control" name="note" value=<%- note %>>
+          </div>
+        </div>
+        <!--/span-->
+      </div>
+      <!--/row-->
+    </div>
+    <% if(!hasSubmit) { %> 
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success">
+          <i class="fa fa-check"></i> Save</button>
+        <button type="button" class="btn btn-inverse">Cancel</button>
+      </div>
+    <% } else { %>
+      <%- include('./chooseRoom') %>
+    <%} %>
+  </form>
+</div>

@@ -1,0 +1,38 @@
+<div class="row">
+  <% room.map(item => { %>
+    <% if(item.roomRentalID === null) { %> 
+      <div class="col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Phòng: <%- item.roomName %></h4>
+                <small>Sức chứa: </small><%- item.capacity %>
+                <div class="card-content">
+                    <div class="sweetalert m-t-15">
+                        <button type="submit" name="register" value="<%- item.roomID %>" class="btn btn-warning btn sweet-confirm">Đăng ký <%- item.roomID %></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /# card -->
+      </div>
+      <!-- /# column -->
+    <% } else { %>
+      <div class="col-lg-3">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Phòng: <%- item.roomName %></h4>
+            <small>Sức chứa: </small><%- item.capacity %>
+            <div class="card-content">
+              <div class="sweetalert m-t-15">
+                <button type="reset" class="btn btn-danger">Đăng ký <%- item.roomID %></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /# card -->
+      </div>
+      <!-- /# column -->
+    <% } %>
+    
+  <% }) %>
+</div>

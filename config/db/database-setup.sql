@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS `student_management`;
 ALTER DATABASE `student_management` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE `persons`(
-    `personID`  VARCHAR(50)   NOT NULL AUTO_INCREMENT, -- Is a Identify Card
+    `personID`  VARCHAR(50)   NOT NULL, -- Is a Identify Card
     `name` VARCHAR(150)  NOT NULL,
     `gender` TINYINT(1),
     `dateOfBirth` DATE,
@@ -47,9 +47,25 @@ CREATE TABLE `students`(
 
 CREATE TABLE `rooms`(
     `roomID` VARCHAR(50)    NOT NULL,
+    `roomName` VARCHAR(50),
     `capacity` INT(3),
-    `status` TINYINT(1),
     PRIMARY KEY (`roomID`)
+);
+
+CREATE TABLE `roomRentals`(
+    `roomRentalID` INT(20)  NOT NULL AUTO_INCREMENT,
+    `roomID` VARCHAR(50)    NOT NULL,
+    `recipientID` VARCHAR(50)   NOT NULL,
+    `recipientType` VARCHAR(20),
+    `rentalDate` DATETIME,
+    `approvalID` VARCHAR(50),
+    `isReturned` TINYINT(1),
+    `returnDate` DATETIME,
+    `note` VARCHAR(200),
+    PRIMARY KEY (`roomRentalID`, `roomID`),
+    CONSTRAINT fk_roomrentals_persons FOREIGN KEY (`recipientID`) REFERENCES `persons`(`personID`),
+    CONSTRAINT fk_roomrentals_roomID FOREIGN KEY (`roomID`) REFERENCES `rooms`(`roomID`),
+	CONSTRAINT fk_roomrentals_employees FOREIGN KEY (`approvalID`) REFERENCES `employees`(`employeeID`)
 );
 
 CREATE TABLE `academicYear` (
@@ -57,14 +73,6 @@ CREATE TABLE `academicYear` (
     `academicYear` DATE,
     `semester` INT(2),
     PRIMARY KEY (`academicYearID`)
-);
-
-CREATE TABLE `classHasAcademicYear` (
-    `academicYearID` INT(4) NOT NULL,
-    `classID` VARCHAR(50)   NOT NULL,
-    PRIMARY KEY (`academicYearID`, `classID`),
-    CONSTRAINT fk_classHasAcademicYear_classID FOREIGN KEY (`classID`) REFERENCES `classes`(`classID`),
-    CONSTRAINT fk_classHasAcademicYear_academicYear FOREIGN KEY (`academicYearID`) REFERENCES `academicYear`(`academicYearID`)
 );
 
 CREATE TABLE `classes`(
@@ -77,6 +85,14 @@ CREATE TABLE `classes`(
     PRIMARY KEY (`classID`),
     CONSTRAINT fk_classes_rooms FOREIGN KEY (`roomID`) REFERENCES `rooms`(`roomID`),
     CONSTRAINT fk_classes_teachers FOREIGN KEY (`mainTeacherID`) REFERENCES `teachers`(`teacherID`)
+);
+
+CREATE TABLE `classHasAcademicYear` (
+    `academicYearID` INT(4) NOT NULL,
+    `classID` VARCHAR(50)   NOT NULL,
+    PRIMARY KEY (`academicYearID`, `classID`),
+    CONSTRAINT fk_classHasAcademicYear_classID FOREIGN KEY (`classID`) REFERENCES `classes`(`classID`),
+    CONSTRAINT fk_classHasAcademicYear_academicYear FOREIGN KEY (`academicYearID`) REFERENCES `academicYear`(`academicYearID`)
 );
 
 CREATE TABLE `studiesAt`(
@@ -98,19 +114,6 @@ CREATE TABLE `events`(
     PRIMARY KEY (`eventID`),
     CONSTRAINT fk_events_persons FOREIGN KEY (`dispatcherID`) REFERENCES `persons`(`personID`),
     CONSTRAINT fk_events_roomID FOREIGN key (`roomID`) REFERENCES `rooms`(`roomID`)
-);
-
-CREATE TABLE `roomRentails`(
-    `roomRentalID` INT(20)  NOT NULL AUTO_INCREMENT,
-    `recipientID` VARCHAR(50)   NOT NULL,
-    `recipientType` VARCHAR(20),
-    `dateOfRental` DATETIME,
-    `approvalID` VARCHAR(50),
-    `isReturned` TINYINT(1),
-    `returnDate` DATETIME,
-    PRIMARY KEY (`roomRentalID`),
-    CONSTRAINT fk_roomrentals_persons FOREIGN KEY (`recipientID`) REFERENCES `persons`(`personID`),
-	CONSTRAINT fk_roomrentals_employees FOREIGN KEY (`approvalID`) REFERENCES `employees`(`employeeID`)
 );
 
 CREATE TABLE `subjects`(
@@ -226,10 +229,18 @@ CREATE TABLE `loginActivity` (
     CONSTRAINT fk_loginactivities_users FOREIGN KEY (`userID`) REFERENCES `users`(`userID`)
 );
 
-INSERT INTO `roles` VALUES ('1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1');
 INSERT INTO `persons` VALUES('1', 'Michael', 'John', '1', '2018-04-18 00:00:00', '0932680505', 'abc', 'employee');
 INSERT INTO `employees` VALUES ('1', '125125125.12', '2018-04-10 00:00:00', NULL, NULL);
 INSERT INTO `users` (`userID`, `personID`, `email`, `password`, `roleID`) VALUES ('1', '1', 'ducnm.john98@gmail.com', '$2a$12$9T0Wrc.4QpSMmerRZjcrOOnBdgNxhbPVHFvGaOW9KeIP9qzrnnhBq', '1');
+INSERT INTO `roles` VALUES ('1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1');
+
+INSERT INTO `rooms` (`roomID`, `roomName`, `capacity`) VALUES ('2', 'A202', '20');
+INSERT INTO `rooms` (`roomID`, `roomName`, `capacity`) VALUES ('3', 'A203', '30');
+INSERT INTO `rooms` (`roomID`, `roomName`, `capacity`) VALUES ('4', 'A204', '40');
+INSERT INTO `rooms` (`roomID`, `roomName`, `capacity`) VALUES ('5', 'A205', '50');
+INSERT INTO `rooms` (`roomID`, `roomName`, `capacity`) VALUES ('6', 'A206', '60');
+INSERT INTO `rooms` (`roomID`, `roomName`, `capacity`) VALUES ('7', 'A207', '70');
+
 
 DELIMITER $$
 CREATE PROCEDURE findRole(personID varchar(50)) 
@@ -283,7 +294,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE findStudentDetailByName(personName varchar(50), academicYearID INT) 
-BEGIN 
+BEGIN
     SELECT * 
     FROM `persons` P 
     INNER JOIN `students` S ON P.personID = S.studentID
@@ -319,8 +330,7 @@ BEGIN
         SELECT CA.classID
         FROM `classHasAcademicYear` CA
         INNER JOIN `academicYear` AY ON CA.academicYearID = AY.academicYearID
-
-        WHERE YEAR(AY.academicYear) = academicYear
+        WHERE YEAR(AY.academicYear) = academicYear;
     );
 END;
  $$
@@ -349,6 +359,65 @@ BEGIN
     INNER JOIN `persons` P ON P.personID = C.mainTeacherID
     INNER JOIN `teachers` T ON T.teacherID = P.personID
     WHERE C.classID = classID;
+END;
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE showRoom(weekTime DATE) 
+BEGIN 
+	SELECT R.*, RR.roomRentalID
+    FROM rooms R
+    LEFT JOIN roomrentals RR ON RR.roomID = R.roomID
+    AND DATEDIFF(RR.rentalDate, weekTime) <= 7
+    AND DATEDIFF(RR.rentalDate, weekTime) >= 0;
+END
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE showRoomRental(roomRentalID INT(20)) 
+BEGIN 
+	SELECT *
+    FROM roomRentals R
+    WHERE R.roomRentalID = roomRentalID;
+END
+ $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE registerRoom(roomID VARCHAR(50), recipientID VARCHAR(50), recipientType VARCHAR(20), rentalDate DATE, note VARCHAR(200))
+BEGIN 
+    SET AUTOCOMMIT = 0;
+	START TRANSACTION;
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    IF NOT EXISTS(SELECT RR.roomID FROM `roomrentals` RR WHERE RR.roomID = roomID AND DATEDIFF(RR.rentalDate, rentalDate) = 0)
+    THEN
+    	INSERT INTO `roomrentals` (`roomRentalID`, `roomID`, `recipientID`, `recipientType`, `rentalDate`, `approvalID`, `isReturned`, `returnDate`, `note`) 
+    	VALUES (NULL, roomID, recipientID, recipientType, rentalDate, NULL, NULL, NULL, NULL);
+    ELSE
+    	ROLLBACK;
+    END IF;
+    COMMIT;
+END;
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE approveRoom(roomRentalID INT(20), approvalID VARCHAR(50))
+BEGIN 
+    SET AUTOCOMMIT = 0;
+	START TRANSACTION;
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    IF NOT EXISTS(SELECT RR.roomID FROM `roomrentals` RR WHERE RR.roomID = roomID AND DATEDIFF(RR.rentalDate, rentalDate) = 0)
+    THEN
+    	INSERT INTO `roomrentals` (`roomRentalID`, `roomID`, `recipientID`, `recipientType`, `rentalDate`, `approvalID`, `isReturned`, `returnDate`, `note`) 
+    	VALUES (NULL, roomID, recipientID, recipientType, rentalDate, NULL, NULL, NULL, NULL);
+    ELSE
+    	ROLLBACK;
+    END IF;
+    COMMIT;
 END;
  $$
 DELIMITER ;
