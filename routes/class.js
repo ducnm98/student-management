@@ -2,51 +2,25 @@ var router = require("express").Router();
 var sequelize = require("../config/db/sequelize");
 
 function findAcademicYear(callback) {
-  sequelize.query("CALL`findAcademicYear`();").then(result => {
+  sequelize.query("CALL`showAllAcademicYear`();").then(result => {
     result = JSON.parse(JSON.stringify(result));
+
     let year = [];
-    let final = [];
-    result.forEach((item, index) => {
-      item.academicYear = new Date(item.academicYear).getFullYear();
-      if (!final.includes(item.academicYear)) {
-        final.push(item.academicYear);
-        year.push({
-          academicYear: item.academicYear,
-          detail: [{
-            id: item.academicYearID,
-            semester: item.semester,
-          }],
-        })
-      } else {
-        let values = year.map(d => {
-          return d['academicYear'];
-        }).indexOf(item.academicYear);
-        year[values]['detail'].push({
-          id: item.academicYearID,
-          semester: item.semester,
-        })
-      }
-      if (result.length - index == 1) {
-        callback(JSON.parse(JSON.stringify(year)))
-      }
+
+    //result is an array; Using foreach()
+    result.map((value, index) => {
+      let { academicYear, academicYearID, semester } = value;
+
+      year.push({
+        academicYear: new Date(academicYear).getFullYear(),
+        id: academicYearID,
+        semester: semester
+      });
     });
 
-    // for (let i = 0; i < year.length; i++) {
-    //   year[i]['detail'] = [];
-    //   for (let j = 0 ; j < result.length; j++) {
-    //     if (year[i]['academicYear'] == result[j]['academicYear']) {
-    //       year[i]['detail'].push({
-    //         id: result[j]['academicYearID'],
-    //         semester: result[j]['semester'],
-    //       })
-    //     }
-    //     if (year.length - i == 1 && result.length - j == 1) {
-    //       callback(JSON.parse(JSON.stringify(year)));
-    //     }
-    //   }
-    // }
+    callback(year);
   });
-};
+}
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
@@ -59,10 +33,11 @@ router.get("/", function(req, res, next) {
 router.get("/:level", function(req, res, next) {
   if (req.isAuthenticated()) {
     findAcademicYear(academicYear => {
+      console.log(academicYear);
       res.render("class/level", {
-        khoi: req.params.level,
+        level: req.params.level,
         academicYear: academicYear,
-        hasListOfClass: false,
+        hasListOfClass: false
       });
     });
   } else {
@@ -72,23 +47,26 @@ router.get("/:level", function(req, res, next) {
 
 router.get("/:level/:academicYear", function(req, res, next) {
   if (req.isAuthenticated()) {
-    sequelize.query("CALL `showClassDetailWithYear`(:academicYear, :levelClass)", {
-      replacements: {
-        academicYear: req.params.academicYear,
-        levelClass: req.params.level,
-      }
-    }).then(listOfClass => {
-      listOfClass = JSON.parse(JSON.stringify(listOfClass));
+    sequelize
+      .query("CALL `findClassByAcademicYear`(:academicYear, :level)", {
+        replacements: {
+          academicYear: req.params.academicYear,
+          level: req.params.level
+        }
+      })
+      .then(listOfClass => {
+        listOfClass = JSON.parse(JSON.stringify(listOfClass));
         findAcademicYear(academicYear => {
+          console.log(academicYear);
           res.render("class/level", {
-            khoi: req.params.level,
+            level: req.params.level,
             year: req.params.academicYear,
             academicYear: academicYear,
             listOfClass: listOfClass,
-            hasListOfClass: true,
+            hasListOfClass: true
           });
         });
-    })
+      });
   } else {
     res.redirect("/login");
   }
@@ -96,28 +74,40 @@ router.get("/:level/:academicYear", function(req, res, next) {
 
 router.get("/:level/:academicYear/:classID", function(req, res, next) {
   if (req.isAuthenticated()) {
-    sequelize.query("CALL `findClassDetail`(:classID)", {
-      replacements: {
-        classID: req.params.classID
-      }
-    }).then(classDetail => {
-      classDetail = JSON.parse(JSON.stringify(classDetail[0]));
-      sequelize.query("CALL `findStudentStudyAtClass`(:classID)", {
+    sequelize
+      .query("CALL `findClassByID`(:classID)", {
         replacements: {
-          classID: req.params.classID,
+          classID: req.params.classID
         }
-      }).then(data => {
-        data = JSON.parse(JSON.stringify(data));
-        res.render("class/classDetail", {
-          classDetail: classDetail,
-          student: data,
-          year: parseInt(req.params.academicYear),
-        })
       })
-    })
+      .then(classDetail => {
+        classDetail = JSON.parse(JSON.stringify(classDetail[0]));
+        sequelize
+          .query("CALL `findStudentByClass`(:classID)", {
+            replacements: {
+              classID: req.params.classID
+            }
+          })
+          .then(studentData => {
+            studentData = JSON.parse(JSON.stringify(studentData));
+            studentData.map(value => ddmmyyyy(value.dateOfBirth));
+            res.render("class/classDetail", {
+              classDetail: classDetail,
+              student: studentData,
+              year: parseInt(req.params.academicYear)
+            });
+          });
+      });
   } else {
     res.redirect("/login");
   }
 });
+
+function ddmmyyyy(date) {
+  return date
+    .split("-")
+    .reverse()
+    .join("-");
+}
 
 module.exports = router;

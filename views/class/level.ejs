@@ -42,7 +42,7 @@
                 </li>
                 <li class="breadcrumb-item active">Class</li>
                 <li class="breadcrumb-item active">
-                  <%- khoi %>
+                  <%- level %>
                 </li>
               </ol>
             </div>
@@ -54,21 +54,12 @@
             <% academicYear.map(item => { %>
               <div class="btn-group">
                 <div class="btn-group">
-                  <a href="/class/<%- khoi %>/<%- item.academicYear %>">
+                  <a href="/class/<%- level %>/<%- item.academicYear %>">
                     <button type="button" class="btn btn-primary">
                       <%- item.academicYear %> -
                         <%- item.academicYear + 1 %>
                     </button>
                   </a>
-                  <!-- <ul class="dropdown-menu" role="menu">
-                      
-                      <% item.detail.map(detail => { %>
-                        <li>
-                          <a href="/class/<%- khoi %>/<%- detail.id %>">Học kỳ: <%- detail.semester %></a>
-                        </li>
-                      <% }) %>
-                    </ul> -->
-
                 </div>
               </div>
               <% }) %>
@@ -78,7 +69,7 @@
                     <% listOfClass.map(item => { %>
                       <div class="col-lg-3">
                         <div class="card">
-                          <a href="/class/<%- khoi %>/<%- year %>/<%- item.classID %>">
+                          <a href="/class/<%- level %>/<%- year %>/<%- item.classID %>">
                             <div class="card-title">
                               <h4>Lớp:
                                 <%- item.className %>
@@ -87,10 +78,10 @@
                             <div class="button-list">
                               <p class="text-muted m-b-15">
                                 <small>Giáo viên chủ nhiệm:</small>
-                                <%- item.name %>
+                                <%- item.mainTeacherName %>
                               </p>
                               <p class="text-muted m-b-15">
-                                <small>Sỉ số lớp:</small>
+                                <small>Sĩ số lớp:</small>
                                 <%- item.noOfStudents %>
                               </p>
                             </div>

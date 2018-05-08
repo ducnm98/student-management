@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:error", (req, res) => {
-  res.render("login", { err: "You type wrong password",});
+  res.render("login", { err: " You types wrong password.",});
 });
 
 router.post("/", 

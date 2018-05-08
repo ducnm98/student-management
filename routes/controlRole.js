@@ -12,7 +12,7 @@ router.get("/", function(req, res, next) {
 router.get("/:personID", (req, res, next) => {
   if (req.isAuthenticated()) {
     if (req.user.role.isAdmin) {
-      sequelize.query("CALL `findPersonInfo`(:personID)", {
+      sequelize.query("CALL `findPerson`(:personID)", {
         replacements: {
           personID: req.params.personID,
         }

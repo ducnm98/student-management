@@ -4,7 +4,7 @@ var moment = require("moment");
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
-    sequelize.query("CALL `findPersonDetail`(:personID)", {
+    sequelize.query("CALL `findPerson`(:personID)", {
       replacements: {
         personID: req.user.personID,
       }

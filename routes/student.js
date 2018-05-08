@@ -2,7 +2,7 @@ var router = require("express").Router();
 var sequelize = require("../config/db/sequelize");
 
 function findAcademicYear(callback) {
-  sequelize.query("CALL`findAcademicYear`();")
+  sequelize.query("CALL`showAllAcademicYear`();")
     .then(result => {
       callback(JSON.parse(JSON.stringify(result)));
     })
@@ -37,7 +37,7 @@ router.post("/find", function(req, res, next) {
   if (req.isAuthenticated()) {
     if (req.user.role.controlStudents || req.user.role.isAdmin) {
       console.log('academicYearID', req.body.academicYearID)
-      sequelize.query("CALL `findStudentDetailByName`(:personName, :academicYearID);", {
+      sequelize.query("CALL `findStudentByName`(:personName, :academicYearID);", {
         replacements: {
           personName: req.body.personName,
           academicYearID: req.body.academicYearID,

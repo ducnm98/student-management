@@ -56,8 +56,8 @@
               </div>
               <div class="header-detail">
                   <h4>Lớp: <%- classDetail.className %></h4>
-                  <h4>Giáo viên chủ nhiệm: <%- classDetail.name %></h4>
-                  <h4>Sỉ số lớp: <%- classDetail.noOfStudents %></h4>
+                  <h4>Giáo viên chủ nhiệm: <%- classDetail.mainTeacherName %></h4>
+                  <h4>Sĩ số lớp: <%- classDetail.noOfStudents %></h4>
                   <h4>Năm học: <%- year %> - <%- year + 1 %></h4>
               </div>
               <div class="card-body">
@@ -78,15 +78,13 @@
                       <% student.map((data, i) => { %>
                         <tr>
                             <td><%- i+1 %></td>
-                            <td><%- data.name %></td>
-                            <% let gender = 'Nữ' %>
-                            <% if(data.gender == 1) {gender = 'Nam'}%>
+                            <td><%- data.studentName %></td>
+                            <% %>
                             <td>
-                              <span><%- gender %></span>
+                              <span><%- parseInt(data.gender) === 1 ? 'Nam': 'Nữ' %></span>
                             </td>
-                            <% let birthday = new Date(data.dateOfBirth) %>
                             <td>
-                              <span><%- birthday.getDate() %>/<%- birthday.getMonth() + 1 %>/<%- birthday.getFullYear() %></span>
+                              <span><%- data.dateOfBirth %></span>
                             </td>
                             <td>
                                 <span><%- data.parentalName %></span>

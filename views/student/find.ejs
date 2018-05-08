@@ -50,15 +50,14 @@
 
             <form method="POST" action="/student/find">
               <div class="form-group">
-                <p class="text-muted m-b-15 f-s-12">Nhập họ tên học sinh muốn hiện thông tin</p>
+                <p class="text-muted m-b-15 f-s-12">Tìm kiếm thông tin học sinh</p>
                 <div class="input-group input-group-rounded">
-                  <input type="text" placeholder="Nhập họ tên học sinh bạn muốn tìm thông tin" name="personName" class="form-control">
+                  <input type="text" placeholder="Nhập họ tên học sinh bạn muốn tìm kiếm" name="personName" class="form-control">
                   <select name="academicYearID" class="form-control custom-select">
-                    <% for(let i = 0; i < academicYear.length; i++) { %>
-                      <% let year = new Date(academicYear[i]['academicYear']).getFullYear() %>
-                      <% let semester = academicYear[i]['semester'] %>
-                      <option value=<%- academicYear[i]['academicYearID'] %>> Năm học: <%- year %> - <%- year+1 %> || Học kỳ <%- semester %> </option>
-                    <% } %>
+                    <% academicYear.map((value, index) => { %>
+                      <% let year = new Date(value.academicYear).getFullYear() %>
+                      <option value=<%- value.academicYearID %>> Năm học <%- year %> - <%- year + 1 %> || Học kỳ <%- value.semester %> </option>
+                    <% }) %>
                   </select>
                   <span class="input-group-btn">
                     <button class="btn btn-primary btn-group-right" type="submit">
@@ -93,41 +92,32 @@
                   </tr>
                 </tfoot>
                 <tbody>
-                  <% for(var i = 0; i < studentList.length; i++) { %>
+                  <% studentList.map((value, index) => { %>
                     <tr>
                       <td>
-                        <%- i + 1 %>
+                        <%- index + 1 %>
                       </td>
                       <td>
-                        <%- studentList[i]['className'] %>
+                        <%- value.className %>
                       </td>
                       <td>
-                        <%- studentList[i]['name'] %>
-                      </td>
-                      <% let gender = 'Nữ';
-                      if (studentList[i]['gender'] == 1) {
-                        gender = 'Nam'
-                      } %>
-                      <td>
-                        <%- gender %>
+                        <%- value.firstName + " " + value.lastName %>
                       </td>
                       <td>
-                        <%- studentList[i]['parentalName'] %>
+                        <%- value.gender ? "Cú có gai" : "Trai bị thiến" %>
                       </td>
                       <td>
-                        <%- studentList[i]['parentalTelephone'] %>
+                        <%- value.parentalName %>
+                      </td>
+                      <td>
+                        <%- value.parentalTelephone %>
                       </td>
                     </tr>
-                    <% } %>
+                    <% }) %>
                 </tbody>
               </table>
             </div>
             <% } %>
-
-
-
-
-
 
             <!-- footer -->
             <%- include('../partials/footer') %>
