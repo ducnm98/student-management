@@ -9,7 +9,11 @@
         <div class="col-md-6">
           <div class="form-group has-success">
             <label class="control-label">Lý do mượn phòng</label>
-            <select class="form-control custom-select" name="recipientType">
+            <% if(hasSubmit) { %> 
+              <select class="form-control custom-select" name="recipientType" readonly>
+            <% } else { %>
+              <select class="form-control custom-select" name="recipientType">
+            <% } %>
               <% if(recipientType == 'meeting') { %>               
                 <option value="meeting" selected>Họp lớp</option>
                 <option value="studies">Học nhóm</option>
@@ -44,25 +48,50 @@
           </div>
         </div>
         <!--/span-->
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="control-label">Ngày mượn phòng</label>
-            <input type="date" class="form-control" name="registerDate" value=<%- registerDate %> >
+        <% if(hasSubmit) { %> 
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="control-label">Ngày mượn phòng</label>
+              <input type="date" class="form-control" name="registerDate" value="<%- registerDate %>" readonly>
+            </div>
           </div>
-        </div>
-        <!--/span-->
+          <!--/span-->
+        <% } else { %>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="control-label">Ngày mượn phòng</label>
+              <input type="date" class="form-control" name="registerDate" value="<%- registerDate %>" required>
+            </div>
+          </div>
+          <!--/span-->
+        <% } %>
+
       </div>
       <!--/row-->
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label class="control-label">Ghi chú</label>
-            <input type="text" class="form-control" name="note" value=<%- note %>>
+      <% if(hasSubmit) { %> 
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label class="control-label">Ghi chú</label>
+              <input type="text" class="form-control" name="note" value="<%- note %>" readonly>
+            </div>
           </div>
+          <!--/span-->
         </div>
-        <!--/span-->
-      </div>
-      <!--/row-->
+        <!--/row-->
+      <% } else { %>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label class="control-label">Ghi chú</label>
+              <input type="text" class="form-control" name="note" value="<%- note %>" required>
+            </div>
+          </div>
+          <!--/span-->
+        </div>
+        <!--/row-->
+      <% } %>
+
     </div>
     <% if(!hasSubmit) { %> 
       <div class="form-actions">
@@ -71,6 +100,9 @@
         <button type="button" class="btn btn-inverse">Cancel</button>
       </div>
     <% } else { %>
+      <div class="form-actions">
+        <a href="/room"><button type="button" class="btn btn-inverse">Back</button></a>
+      </div>
       <%- include('./chooseRoom') %>
     <%} %>
   </form>

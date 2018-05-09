@@ -98,6 +98,7 @@ CREATE TABLE `classHasAcademicYear` (
 CREATE TABLE `studiesAt`(
     `studentID` VARCHAR(50) NOT NULL,
     `classID` VARCHAR(50)   NOT NULL,
+    `conduct` TINYINT(2)    NOT NULL DEFAULT 0,
     PRIMARY KEY (`studentID`, `classID`),
     CONSTRAINT fk_studiesat_students FOREIGN KEY (`studentID`) REFERENCES `students`(`studentID`),
     CONSTRAINT fk_studiesat_classes FOREIGN KEY (`classID`) REFERENCES `classes`(`classID`)
@@ -227,6 +228,17 @@ CREATE TABLE `loginActivity` (
     `logOutDate` DATETIME,
     PRIMARY KEY (`loginActivityID` ,`userID`),
     CONSTRAINT fk_loginactivities_users FOREIGN KEY (`userID`) REFERENCES `users`(`userID`)
+);
+
+CREATE TABLE `attention` (
+    `attentionID`   INT(10)     NOT NULL AUTO_INCREMENT,
+    `studentID`     VARCHAR(50) NOT NULL,
+    `classID`       VARCHAR(50) NOT NULL,
+    `dateTime`      DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `withPermission` TINYINT(1) DEFAULT 0,
+    PRIMARY KEY (`attentionID`, `studentID`, `classID`),
+    CONSTRAINT fk_attention_students FOREIGN KEY (`studentID`) REFERENCES `students`(`studentID`),
+    CONSTRAINT fk_attention_class FOREIGN KEY (`classID`) REFERENCES `classes`(`classID`)
 );
 
 INSERT INTO `persons` VALUES('1', 'Michael', 'John', '1', '2018-04-18 00:00:00', '0932680505', 'abc', 'employee');
@@ -369,8 +381,7 @@ BEGIN
 	SELECT R.*, RR.roomRentalID
     FROM rooms R
     LEFT JOIN roomrentals RR ON RR.roomID = R.roomID
-    AND DATEDIFF(RR.rentalDate, weekTime) <= 7
-    AND DATEDIFF(RR.rentalDate, weekTime) >= 0;
+    AND DATEDIFF(RR.rentalDate, weekTime) = 0;
 END
  $$
 DELIMITER ;
@@ -409,14 +420,36 @@ CREATE PROCEDURE approveRoom(roomRentalID INT(20), approvalID VARCHAR(50))
 BEGIN 
     SET AUTOCOMMIT = 0;
 	START TRANSACTION;
-    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-    IF NOT EXISTS(SELECT RR.roomID FROM `roomrentals` RR WHERE RR.roomID = roomID AND DATEDIFF(RR.rentalDate, rentalDate) = 0)
-    THEN
-    	INSERT INTO `roomrentals` (`roomRentalID`, `roomID`, `recipientID`, `recipientType`, `rentalDate`, `approvalID`, `isReturned`, `returnDate`, `note`) 
-    	VALUES (NULL, roomID, recipientID, recipientType, rentalDate, NULL, NULL, NULL, NULL);
-    ELSE
-    	ROLLBACK;
-    END IF;
+    UPDATE `roomRentals` R
+    SET R.approvalID = approvalID
+    WHERE R.roomRentalID = roomRentalID;
+    COMMIT;
+END
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE disapproveRoom(roomRentalIDA INT(20))
+BEGIN 
+    SET AUTOCOMMIT = 0;
+	START TRANSACTION;
+    DELETE FROM `roomRentals`
+    WHERE `roomRentalID` = roomRentalIDA;
+    COMMIT;
+END
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE showRoomWaiting()
+BEGIN 
+    SET AUTOCOMMIT = 0;
+	START TRANSACTION;
+    SELECT * 
+    FROM `roomrentals` R
+    INNER JOIN `rooms` RO ON RO.roomID = R.roomID
+    INNER JOIN `persons` P ON P.personID = R.recipientID
+    WHERE R.approvalID IS NULL;
     COMMIT;
 END;
  $$

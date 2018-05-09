@@ -1,0 +1,35 @@
+<form method="POST" action="/room/approve">
+  <div class="row">
+    <% room.map(item => { %>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Phòng: <%- item.roomName %></h4>
+            <div class="row">
+              <div class="col-lg-6">
+                <small>Sức chứa: </small><%- item.capacity %><br>
+                <% let temp = new Date(item.rentalDate) %>
+                <small>Ngày mượn: </small><%- temp.getDate() %> / <%- temp.getMonth() + 1 %> / <%- temp.getFullYear() %><br>
+              </div>
+              <div class="col-lg-6">
+                <small>Người mượn: </small><%- item.name %><br>
+                <small>Số điện thoại: </small><%- item.telephone %><br> 
+              </div>
+            </div>
+            <br>
+            <small>Loại hoạt động: </small><%- item.recipientType %><br>
+            <small>Ghi chú: </small><%- item.note %>
+            <div class="card-content">
+              <div class="sweetalert m-t-15">
+                <button type="submit" name="approve" value="<%- item.roomRentalID %>" class="btn btn-warning btn sweet-confirm">Chấp nhận</button>
+                <button type="submit" name="disagree" value="<%- item.roomRentalID %>" class="btn btn-danger btn sweet-confirm">Không chấp nhận</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /# card -->
+      </div>
+    <!-- /# column -->    
+    <% }) %>
+  </div>
+</form>

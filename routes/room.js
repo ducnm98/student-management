@@ -1,6 +1,7 @@
 var router = require("express").Router();
 const Sequelize = require("sequelize");
 var sequelize = require("../config/db/sequelize");
+var moment = require('moment');
 
 function findRentalDetail(date, callback){
   sequelize.query("CALL `showRoom`(:dateWeek)", {
@@ -38,6 +39,7 @@ router.post("/", function(req, res, next) {
         recipientType: req.body.recipientType,
         registerDate: req.body.registerDate,
         note: req.body.note,
+        success: '',
       });
     })
   } else {
@@ -80,7 +82,7 @@ router.post("/register", function(req, res, next) {
         note: req.body.note,
       }
     }).then(data => {
-      res.redirect('/room')
+      res.redirect('/room/success')
     }).catch(err => {
       console.log('has err', err)
     })
@@ -88,6 +90,32 @@ router.post("/register", function(req, res, next) {
     res.redirect("/login");
   }
 });
+
+router.post("/approve", (req, res, next) => {
+  if (req.isAuthenticated()) {
+    if (req.body.approve) {
+      console.log(req.body.approve)
+      sequelize.query("CALL `approveRoom`(:roomRentalID, :approvalID)", {
+        replacements: {
+          roomRentalID: req.body.approve,
+          approvalID: req.user.personID,
+        }
+      }).then(data => {
+        res.redirect("/room/approve")
+      })
+    } else if (req.body.disagree) {
+      sequelize.query("CALL `disapproveRoom`(:roomRentalID)", {
+        replacements: {
+          roomRentalID: req.body.disagree,
+        }
+      }).then(data => {
+        res.redirect("/room/approve")
+      })
+    }
+  } else {
+    res.redirect("/login");
+  }
+})
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
@@ -97,11 +125,42 @@ router.get("/", function(req, res, next) {
       registerDate: 'yyyy/mm/dd',
       recipientType: '',
       note: '',
-       // approveRole: req.user.role.approveRooms
+      success: '',
     });
   } else {
     res.redirect("/login");
   }
 });
+
+router.get("/success", (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.render("room/index", {
+      hasSubmit: false,
+      room: [],
+      registerDate: 'yyyy/mm/dd',
+      recipientType: '',
+      note: '',
+      success: 'Your register has been successful registered, and waiting for approving',
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+router.get("/approve", (req, res, next) => {
+  if (req.isAuthenticated()) {
+    sequelize.query("CALL showRoomWaiting()")
+    .then(data => {
+      data = JSON.parse(JSON.stringify(data));
+      console.log(data)
+      res.render("room/approve", {
+        success: '',
+        room: data,
+      });
+    })
+  } else {
+    res.redirect("/login");
+  }
+})
 
 module.exports = router;
