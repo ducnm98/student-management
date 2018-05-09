@@ -441,6 +441,19 @@ END
 DELIMITER ;
 
 DELIMITER $$
+CREATE PROCEDURE returnRoom(roomRentalIDA INT(20), returnDate DATETIME)
+BEGIN 
+    SET AUTOCOMMIT = 0;
+	START TRANSACTION;
+    UPDATE `roomRentals` R
+    SET R.isReturned = 1, R.returnDate = returnDate
+    WHERE R.roomRentalID = roomRentalIDA;
+    COMMIT;
+END
+ $$
+DELIMITER ;
+
+DELIMITER $$
 CREATE PROCEDURE showRoomWaiting()
 BEGIN 
     SET AUTOCOMMIT = 0;
@@ -450,6 +463,22 @@ BEGIN
     INNER JOIN `rooms` RO ON RO.roomID = R.roomID
     INNER JOIN `persons` P ON P.personID = R.recipientID
     WHERE R.approvalID IS NULL;
+    COMMIT;
+END;
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE showRoomRentaling()
+BEGIN 
+    SET AUTOCOMMIT = 0;
+	START TRANSACTION;
+    SELECT * 
+    FROM `roomrentals` R
+    INNER JOIN `rooms` RO ON RO.roomID = R.roomID
+    INNER JOIN `persons` P ON P.personID = R.recipientID
+    WHERE R.isReturned IS NULL
+    AND R.approvalID IS NOT NULL;
     COMMIT;
 END;
  $$

@@ -115,7 +115,23 @@ router.post("/approve", (req, res, next) => {
   } else {
     res.redirect("/login");
   }
-})
+});
+
+router.post("/return", (req, res, next) => {
+  if (req.isAuthenticated()) {
+    console.log(req.body.return);
+    sequelize.query("CALL `returnRoom`(:roomRentalID, :returnDate)", {
+      replacements: {
+        roomRentalID: req.body.return,
+        returnDate: new Date(),
+      }
+    }).then(data => {
+      res.redirect("/room/return")
+    })
+  } else {
+    res.redirect("/login");
+  }
+});
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
@@ -161,6 +177,22 @@ router.get("/approve", (req, res, next) => {
   } else {
     res.redirect("/login");
   }
-})
+});
+
+router.get("/return", (req, res, next) => {
+  if (req.isAuthenticated()) {
+    sequelize.query("CALL showRoomRentaling()")
+    .then(data => {
+      data = JSON.parse(JSON.stringify(data));
+      console.log(data)
+      res.render("room/return", {
+        success: '',
+        room: data,
+      });
+    })
+  } else {
+    res.redirect("/login");
+  }
+});
 
 module.exports = router;
