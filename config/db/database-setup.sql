@@ -257,8 +257,10 @@ INSERT INTO `rooms` (`roomID`, `roomName`, `capacity`) VALUES ('7', 'A207', '70'
 DELIMITER $$
 CREATE PROCEDURE findRole(personID varchar(50)) 
 BEGIN 
+    START TRANSACTION;
     SELECT * FROM roles
     WHERE roles.roleID IN (SELECT U.roleID FROM users U WHERE U.personID = personID);
+    COMMIT;
 END;
  $$
 DELIMITER ;
@@ -266,8 +268,10 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE findPersonInfo(personID varchar(50)) 
 BEGIN 
+    START TRANSACTION;
     SELECT * FROM persons
     WHERE persons.personID = personID;
+    COMMIT;
 END;
  $$
 DELIMITER ;
@@ -275,8 +279,10 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE findUsers(personID varchar(50)) 
 BEGIN 
+    START TRANSACTION;
     SELECT * FROM users
     WHERE users.personID = personID;
+    COMMIT;
 END;
  $$
 DELIMITER ;
@@ -285,21 +291,37 @@ DELIMITER $$
 CREATE PROCEDURE findPersonDetail(personID varchar(50)) 
 BEGIN 
     DECLARE typeOfPerson VARCHAR(20);
+    START TRANSACTION;
     SELECT P.personsType INTO typeOfPerson FROM persons P WHERE P.personID = personID;
-    IF (typeOfPerson = 'employee')
-    THEN BEGIN
-        SELECT *
-        FROM persons INNER JOIN employees
-        ON persons.personID = employees.employeeID
-        WHERE persons.personID = personID;
+    IF (typeOfPerson = 'employee') THEN 
+    BEGIN
+        DECLARE typeOfEmployee VARCHAR(20);
+        SELECT E.employeeID INTO typeOfEmployee FROM employees E WHERE E.employeeID = personID;
+        IF (typeOfEmployee = 'supervisor') THEN 
+        BEGIN
+            SELECT *
+            FROM persons P
+            INNER JOIN employees E ON P.personID = E.employeeID
+            INNER JOIN supervisors S ON S.supervisorID = E.employeeID
+            WHERE P.personID = personID;
+        END;
+        ELSE BEGIN
+            SELECT *
+            FROM persons P
+            INNER JOIN employees E ON P.personID = E.employeeID
+            INNER JOIN teachers T ON T.teacherID = E.employeeID
+            WHERE P.personID = personID;
+        END;
+        END IF;
     END;
-    ELSE BEGIN
+    ELSE BEGIN 
         SELECT *
         FROM persons INNER JOIN students
         ON persons.personID = students.studentID
         WHERE persons.personID = personID;
     END;
     END IF;
+    COMMIT;
 END;
  $$
 DELIMITER ;
@@ -312,7 +334,8 @@ BEGIN
     INNER JOIN `students` S ON P.personID = S.studentID
     INNER JOIN `studiesat` SA ON S.studentID = SA.studentID
     INNER JOIN `classes` C ON C.classID = SA.classID
-    INNER JOIN `academicyear`A ON A.academicYearID = C.academicYearID
+    INNER JOIN `classHasAcademicYear` CH ON CH.classID = C.classID
+    INNER JOIN `academicyear`A ON A.academicYearID = CH.academicYearID
     WHERE P.name LIKE CONCAT('%', personName , '%')
     AND A.academicYearID = academicYearID;
 END;
@@ -351,6 +374,13 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE findStudentStudyAtClass(classID VARCHAR(50)) 
 BEGIN 
+    -- declare handler
+    declare exit handler for sqlexception
+    begin
+    -- ERROR
+    rollback;
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ERROR';
+    end;
     SELECT *
     FROM `persons` P
     INNER JOIN `students` S ON S.studentID = P.personID
@@ -382,27 +412,45 @@ BEGIN
     FROM rooms R
     LEFT JOIN roomrentals RR ON RR.roomID = R.roomID
     AND DATEDIFF(RR.rentalDate, weekTime) = 0;
-END
+END;
  $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE showRoomRental(roomRentalID INT(20)) 
+CREATE PROCEDURE updateStudentInfo(personID VARCHAR(50),dateOfBirth DATE, telephone VARCHAR(11), parentalName VARCHAR(50), parentalTelephone VARCHAR(13), address1 VARCHAR(100))
 BEGIN 
-	SELECT *
-    FROM roomRentals R
-    WHERE R.roomRentalID = roomRentalID;
-END
+    START TRANSACTION;
+	UPDATE `persons`
+    SET `persons`.`dateOfBirth` = dateOfBirth,
+    `persons`.`telephone` = telephone,
+    `persons`.`address` = address1
+    WHERE `persons`.`personID` = personID;
+    UPDATE `students`
+    SET `students`.`parentalTelephone` = parentalTelephone,
+    `students`.`parentalName` = parentalName
+    WHERE `students`.`studentID` = personID;
+    COMMIT;
+END;
  $$
 DELIMITER ;
+
+-- DELIMITER $$
+-- CREATE PROCEDURE showRoomRental(roomRentalID INT(20)) 
+-- BEGIN 
+--     START TRANSACTION;
+-- 	SELECT *
+--     FROM roomRentals R
+--     WHERE R.roomRentalID = roomRentalID;
+--     COMMIT;
+-- END
+--  $$
+-- DELIMITER ;
 
 
 DELIMITER $$
 CREATE PROCEDURE registerRoom(roomID VARCHAR(50), recipientID VARCHAR(50), recipientType VARCHAR(20), rentalDate DATE, note VARCHAR(200))
 BEGIN 
     SET AUTOCOMMIT = 0;
-	START TRANSACTION;
-    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     IF NOT EXISTS(SELECT RR.roomID FROM `roomrentals` RR WHERE RR.roomID = roomID AND DATEDIFF(RR.rentalDate, rentalDate) = 0)
     THEN
     	INSERT INTO `roomrentals` (`roomRentalID`, `roomID`, `recipientID`, `recipientType`, `rentalDate`, `approvalID`, `isReturned`, `returnDate`, `note`) 
@@ -410,7 +458,6 @@ BEGIN
     ELSE
     	ROLLBACK;
     END IF;
-    COMMIT;
 END;
  $$
 DELIMITER ;
@@ -419,11 +466,9 @@ DELIMITER $$
 CREATE PROCEDURE approveRoom(roomRentalID INT(20), approvalID VARCHAR(50))
 BEGIN 
     SET AUTOCOMMIT = 0;
-	START TRANSACTION;
     UPDATE `roomRentals` R
     SET R.approvalID = approvalID
     WHERE R.roomRentalID = roomRentalID;
-    COMMIT;
 END
  $$
 DELIMITER ;
@@ -432,10 +477,8 @@ DELIMITER $$
 CREATE PROCEDURE disapproveRoom(roomRentalIDA INT(20))
 BEGIN 
     SET AUTOCOMMIT = 0;
-	START TRANSACTION;
     DELETE FROM `roomRentals`
     WHERE `roomRentalID` = roomRentalIDA;
-    COMMIT;
 END
  $$
 DELIMITER ;
@@ -444,11 +487,9 @@ DELIMITER $$
 CREATE PROCEDURE returnRoom(roomRentalIDA INT(20), returnDate DATETIME)
 BEGIN 
     SET AUTOCOMMIT = 0;
-	START TRANSACTION;
     UPDATE `roomRentals` R
     SET R.isReturned = 1, R.returnDate = returnDate
     WHERE R.roomRentalID = roomRentalIDA;
-    COMMIT;
 END
  $$
 DELIMITER ;
@@ -457,13 +498,11 @@ DELIMITER $$
 CREATE PROCEDURE showRoomWaiting()
 BEGIN 
     SET AUTOCOMMIT = 0;
-	START TRANSACTION;
     SELECT * 
     FROM `roomrentals` R
     INNER JOIN `rooms` RO ON RO.roomID = R.roomID
     INNER JOIN `persons` P ON P.personID = R.recipientID
     WHERE R.approvalID IS NULL;
-    COMMIT;
 END;
  $$
 DELIMITER ;
@@ -472,14 +511,23 @@ DELIMITER $$
 CREATE PROCEDURE showRoomRentaling()
 BEGIN 
     SET AUTOCOMMIT = 0;
-	START TRANSACTION;
     SELECT * 
     FROM `roomrentals` R
     INNER JOIN `rooms` RO ON RO.roomID = R.roomID
     INNER JOIN `persons` P ON P.personID = R.recipientID
     WHERE R.isReturned IS NULL
     AND R.approvalID IS NOT NULL;
-    COMMIT;
 END;
  $$
 DELIMITER ;
+
+
+-- Note
+
+-- declare handler
+declare exit handler for sqlexception
+begin
+-- ERROR
+rollback;
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ERROR';
+end;
