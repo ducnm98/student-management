@@ -1,3 +1,11 @@
 .header-detail {
   text-align: center;
 }
+.report-header1-left {
+  float: left;
+}
+
+.report-header2-right {
+  float: right;
+  text-align: center;
+}
