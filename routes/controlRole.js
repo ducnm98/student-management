@@ -31,6 +31,7 @@ router.get("/:personID", (req, res, next) => {
                   }
               }
           }
+          console.log(col)
           roleInfo = JSON.parse(JSON.stringify(roleInfo[0]));
           res.render("role/index", {
             person: personInfo,

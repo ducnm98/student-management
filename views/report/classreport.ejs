@@ -5,120 +5,48 @@
                 <div class="report-header1-left">
                     <h6>Sở giáo dục và đào tạo</h6>
                     <h6>THPT Trần Hưng Đạo</h6>
-                    <h6>Báo cáo số:</h6>
+                    <!-- <h6>Báo cáo số:</h6> -->
                 </div>
                 <div class="report-header2-right">
                     <h6>Cộng hòa xã hội chủ nghĩa Việt Nam</h6>
                     <h6>Độc lập - Tự do - Hạnh phúc</h6>
-                    <h6>Ngày xx tháng xx năm xxxx</h6>
+                    <% let date = new Date() %>
+                    <h6>Ngày <%- date.getDate() %> tháng <%- date.getMonth() %> năm <%- date.getFullYear() %></h6>
                 </div>
             </div>
             <div class="card-body">
                 <h1 class="card-title"><center>BẢNG ĐIỂM TBM LỚP</center></h1>
-                <h6><pre>Tên Lớp: </pre></h6>
-                <h6><pre>GVCN:</pre></h6>
-                <h6><pre>Học kì: 2           Năm học:</pre></h6>
+                <h6><pre>Tên Lớp: <%- classDetail.className %></pre></h6>
+                <h6><pre>GVCN: <%- classDetail.name %></pre></h6>
+                <% date = new Date(academicYear.academicYear) %>
+                <h6><pre>Học kì: <%- academicYear.semester %>          Năm học:   <%- date.getFullYear() %> - <%- date.getFullYear() + 1%></pre></h6>
                     <div class="table-responsive m-t-40">
                         <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th><center>STT</center></th>
                                     <th><center>Tên học sinh</center></th>
-                                    <th><center>Toán</center></th>
-                                    <th><center>Vật Lý</center></th>
-                                    <th><center>Hóa Học</center></th>
-                                    <th><center>Sinh học</center></th>
-                                    <th><center>Ngữ Văn</center></th>
-                                    <th><center>Tiếng Anh</center></th>
-                                    <th><center>Lịch Sử</center></th>
-                                    <th><center>Địa Lý</center></th>
+                                    <% col.map(item => { %>
+                                      <th><center><%- item %></center></th>
+                                    <% }) %>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <td>1</td>
-                                <td>Nguyen A</td>
-                                <td>6</td>
-                                <td>7</td>
-                                <td>9</td>
-                                <td>5</td>
-                                <td>8.4</td>
-                                <td>7.2</td>
-                                <td>8.9</td>
-                                <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Ngữ V</td>
-                                    <td>6</td>
-                                    <td>7</td>
-                                    <td>9</td>
-                                    <td>5</td>
-                                    <td>8.4</td>
-                                    <td>7.2</td>
-                                    <td>8.9</td>
-                                    <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Tiến B</td>
-                                    <td>6</td>
-                                    <td>7</td>
-                                    <td>9</td>
-                                    <td>5</td>
-                                    <td>8.4</td>
-                                    <td>7.2</td>
-                                    <td>8.9</td>
-                                    <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Nguyễn Lý</td>
-                                    <td>6</td>
-                                    <td>7</td>
-                                    <td>9</td>
-                                    <td>5</td>
-                                    <td>8.4</td>
-                                    <td>7.2</td>
-                                    <td>8.9</td>
-                                    <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>Trần Học</td>
-                                    <td>6</td>
-                                    <td>7</td>
-                                    <td>9</td>
-                                    <td>5</td>
-                                    <td>8.4</td>
-                                    <td>7.2</td>
-                                    <td>8.9</td>
-                                    <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>Hà Hoa</td>
-                                    <td>6</td>
-                                    <td>7</td>
-                                    <td>9</td>
-                                    <td>5</td>
-                                    <td>8.4</td>
-                                    <td>7.2</td>
-                                    <td>8.9</td>
-                                    <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>7</td>
-                                    <td>Ngọc Lý</td>
-                                    <td>6</td>
-                                    <td>7</td>
-                                    <td>9</td>
-                                    <td>5</td>
-                                    <td>8.4</td>
-                                    <td>7.2</td>
-                                    <td>8.9</td>
-                                    <td>9</td>
-                                </tr>
+                              <tr>
+                                <% grade.map((item, index) => { %>
+                                  <td><%- index + 1 %></td>
+                                  <td><%- item.studentName %></td>
+                                  <% let temp = item.subjects %>
+                                  <% col.map(subject => {
+                                    temp.map(grade => {
+                                      if (grade.subjectName == subject) { %>
+                                        <td><%- grade.points %></td>
+                                      <% }
+                                    })
+                                  }) %>
+                                  
+                                <% }) %>
+                              </tr>
                             </tbody>
                         </table>
                     </div>
