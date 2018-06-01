@@ -451,6 +451,7 @@ DELIMITER $$
 CREATE PROCEDURE registerRoom(roomID VARCHAR(50), recipientID VARCHAR(50), recipientType VARCHAR(20), rentalDate DATE, note VARCHAR(200))
 BEGIN 
     SET AUTOCOMMIT = 0;
+    START TRANSACTION;
     IF NOT EXISTS(SELECT RR.roomID FROM `roomrentals` RR WHERE RR.roomID = roomID AND DATEDIFF(RR.rentalDate, rentalDate) = 0)
     THEN
     	INSERT INTO `roomrentals` (`roomRentalID`, `roomID`, `recipientID`, `recipientType`, `rentalDate`, `approvalID`, `isReturned`, `returnDate`, `note`) 
@@ -458,6 +459,7 @@ BEGIN
     ELSE
     	ROLLBACK;
     END IF;
+    COMMIT;
 END;
  $$
 DELIMITER ;
@@ -561,11 +563,41 @@ BEGIN
     
 
     CLOSE dataPersonID;
-    
+    SELECT *
+        FROM `persons` P 
+        INNER JOIN `students` S ON P.personID = S.studentID
+        INNER JOIN `studiesAt` SA ON S.studentID = SA.studentID
+        INNER JOIN `classes` C ON C.classID = SA.classID
+        INNER JOIN `classHasAcademicYear` CH ON CH.classID = C.classID
+        INNER JOIN `academicyear`A ON A.academicYearID = CH.academicYearID
+        WHERE SA.classID = classID
+        AND A.academicYearID = academicYearID;
 END
  $$
 DELIMITER ;
 
+DELIMITER $$
+CREATE PROCEDURE insertStudentInfo(personID VARCHAR(50), gender TINYINT(1), nameA VARCHAR(150),dateOfBirth DATE, telephone VARCHAR(11), parentalName VARCHAR(50), parentalTelephone VARCHAR(13), address1 VARCHAR(100))
+BEGIN 
+    -- declare handler 
+    declare exit handler for sqlexception 
+    begin 
+    rollback; 
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'ERROR';
+    end;
+
+    IF NOT EXISTS (SELECT * FROM `persons` P WHERE P.personID = personID) THEN
+    BEGIN
+	INSERT INTO `persons` (`personID`, `name`, `gender`, `dateOfBirth`, `telephone`, `address`, `personsType`)
+    VALUES(personID, nameA, gender, dateOfBirth, telephone, address1, 'student');
+    INSERT INTO `students` (`studentID`, `startDate`, `parentalName`, `parentalTelephone`)
+    VALUES(personID, CURRENT_TIMESTAMP, parentalName, parentalTelephone);
+    END;
+    END IF;
+END;
+ $$
+DELIMITER ;
 
 -- Note
 
