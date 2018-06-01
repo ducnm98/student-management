@@ -521,6 +521,51 @@ END;
  $$
 DELIMITER ;
 
+DELIMITER $$
+CREATE PROCEDURE findStudentAtClassAndUpdateConduct(classID VARCHAR(50), academicYearID INT, conduct TINYINT(2))
+BEGIN
+        
+    DECLARE personIDLooking VARCHAR(50);
+    DECLARE done INT DEFAULT FALSE;
+    
+    DECLARE dataPersonID CURSOR FOR
+        SELECT P.personID
+        FROM `persons` P 
+        INNER JOIN `students` S ON P.personID = S.studentID
+        INNER JOIN `studiesAt` SA ON S.studentID = SA.studentID
+        INNER JOIN `classes` C ON C.classID = SA.classID
+        INNER JOIN `classHasAcademicYear` CH ON CH.classID = C.classID
+        INNER JOIN `academicyear`A ON A.academicYearID = CH.academicYearID
+        WHERE SA.classID = classID
+        AND A.academicYearID = academicYearID;
+	
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done=TRUE;
+	declare exit handler for sqlexception
+    begin
+		rollback;
+    end;
+	-- do sleep(10);
+    OPEN dataPersonID;
+    dataPersonID : LOOP
+        FETCH dataPersonID INTO personIDLooking;
+        IF done THEN
+        	
+            LEAVE dataPersonID;
+        END IF;
+
+        UPDATE `studiesAt`
+        SET `studiesAt`.`conduct` = conduct
+        WHERE `studiesAt`.`studentID` = personIDLooking;
+
+    END LOOP;
+    
+
+    CLOSE dataPersonID;
+    
+END
+ $$
+DELIMITER ;
+
 
 -- Note
 
