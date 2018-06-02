@@ -1,56 +1,142 @@
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="report-header1-left">
-                    <h6>Sở giáo dục và đào tạo</h6>
-                    <h6>THPT Trần Hưng Đạo</h6>
-                    <!-- <h6>Báo cáo số:</h6> -->
-                </div>
-                <div class="report-header2-right">
-                    <h6>Cộng hòa xã hội chủ nghĩa Việt Nam</h6>
-                    <h6>Độc lập - Tự do - Hạnh phúc</h6>
-                    <% let date = new Date() %>
-                    <h6>Ngày <%- date.getDate() %> tháng <%- date.getMonth() %> năm <%- date.getFullYear() %></h6>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- Favicon icon -->
+  <title>Báo cáo</title>
+  <%- include('../partials/stylesheet') %>
+
+</head>
+
+<body class="fix-header fix-sidebar">
+  <!-- Preloader - style you can find in spinners.css -->
+  <div class="preloader">
+    <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+  </div>
+  <!-- Main wrapper  -->
+  <div id="main-wrapper">
+    <!-- header header  -->
+    <%- include('../partials/header')%>
+      <!-- End header header -->
+      <!-- Left Sidebar  -->
+      <%- include('../partials/menu')%>
+        <!-- End Left Sidebar  -->
+        <!-- Page wrapper  -->
+        <div class="page-wrapper">
+          <!-- Bread crumb -->
+          <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+              <h3 class="text-primary">Report</h3>
             </div>
-            <div class="card-body">
-                <h1 class="card-title"><center>BẢNG ĐIỂM TBM LỚP</center></h1>
-                <h6><pre>Tên Lớp: <%- classDetail.className %></pre></h6>
-                <h6><pre>GVCN: <%- classDetail.name %></pre></h6>
-                <% date = new Date(academicYear.academicYear) %>
-                <h6><pre>Học kì: <%- academicYear.semester %>          Năm học:   <%- date.getFullYear() %> - <%- date.getFullYear() + 1%></pre></h6>
-                    <div class="table-responsive m-t-40">
-                        <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th><center>STT</center></th>
-                                    <th><center>Tên học sinh</center></th>
-                                    <% col.map(item => { %>
-                                      <th><center><%- item %></center></th>
-                                    <% }) %>
-                                </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <% grade.map((item, index) => { %>
-                                  <td><%- index + 1 %></td>
-                                  <td><%- item.studentName %></td>
-                                  <% let temp = item.subjects %>
-                                  <% col.map(subject => {
-                                    temp.map(grade => {
-                                      if (grade.subjectName == subject) { %>
-                                        <td><%- grade.points %></td>
-                                      <% }
-                                    })
-                                  }) %>
-                                  
-                                <% }) %>
-                              </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="col-md-7 align-self-center">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="javascript:void(0)">Home</a>
+                </li>
+                <li class="breadcrumb-item active">Report</li>
+              </ol>
             </div>
+          </div>
+          <!-- End Bread crumb -->
+          <div class="container-fluid">
+           <%- include('./classReportChart') %>
+            
+            <%- include('./classReportDetail') %>
+            
+            <!-- Start Page Content -->
+          
+            <!-- footer -->
+            <%- include('../partials/footer') %>
+              <!-- End footer -->
+          <!-- End Page wrapper  -->
+        <%- include('../partials/scripts') %>
+        <%- include('../partials/export') %>
+        <!-- Echart -->
+          </div>
         </div>
-    </div>
-</div>
+  </div>
+  <script src='/js/lib/echart/echarts.js' type="text/javascript"></script>
+  <script src='/js/lib/chart-js/Chart.bundle.js' type="text/javascript"></script>
+  <script>
+    $(document).ready(function() {
+
+      var dom = document.getElementById("basic-Pie_1");
+      var bpChart = echarts.init(dom);
+
+      var app = {};
+      option = null;
+      option = {
+          color: ['#62549a','#4aa9e9', '#ff6c60','#eac459', '#25c3b2' ],
+          tooltip : {
+              trigger: 'item',
+              formatter: '{a} <br/>{b} : {c} ({d}%)'
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['Giỏi','Khá','Trung bình','Yếu', 'Ở lại']
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'Source',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:<%= studentType.good %>, name:'Giỏi'},
+                      {value:<%= studentType.normal %>, name:'Khá'},
+                      {value:<%= studentType.average %>, name:'Trung bình'},
+                      {value:<%= studentType.week %>, name:'Yếu'},
+                      {value:<%= studentType.retention %>, name:'Ở lại'}
+                  ]
+              }
+          ]
+      };
+
+      if (option && typeof option === "object") {
+          bpChart.setOption(option, false);
+      }
+    })
+  </script>
+  <script>
+    $(document).ready(function() {
+      var ctx = document.getElementById( "singelBarChart_1" );
+      ctx.height = 150;
+      var myChart = new Chart( ctx, {
+        type: 'bar',
+        data: {
+          labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" ],
+          datasets: [
+            {
+              label: "Số lượng",
+              // data: [ 40, 55, 75, 78, 56, 55, 40, 12, 31, 13, 13 ],
+              data: [<%= points %>],
+              borderColor: "rgba(0, 123, 255, 0.9)",
+              borderWidth: "0",
+              backgroundColor: "rgba(0, 123, 255, 0.5)"
+                                }
+                            ]
+        },
+        options: {
+          scales: {
+            yAxes: [ {
+              ticks: {
+                beginAtZero: true
+              }
+                                    } ]
+          }
+        }
+      } );
+    });
+  </script>
+</body>
+
+</html>

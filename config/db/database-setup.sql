@@ -599,6 +599,36 @@ END;
  $$
 DELIMITER ;
 
+DELIMITER $$
+CREATE PROCEDURE `findGrade`(IN classID VARCHAR(50), IN academicYear DATE)
+BEGIN 
+    SELECT *
+    FROM `grades` G
+    INNER JOIN `persons` P ON P.personID = G.studentID
+    INNER JOIN `subjects` S ON S.subjectID = G.subjectID
+    WHERE G.studentID IN (
+        SELECT S.studentID
+        FROM `studiesAt` S
+        WHERE S.classID = classID)
+    AND G.academicYearID IN (
+        SELECT AY.academicYearID
+        FROM `academicYear` AY
+        WHERE YEAR(AY.academicYear) = YEAR(academicYear)
+    );
+END;
+ $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `findAcademicYearDetail`(IN `academicYear` INT)
+BEGIN 
+    SELECT *
+    FROM `academicyear` G
+    WHERE YEAR(G.academicYear) = YEAR(academicYear);
+
+END$$
+DELIMITER ;
+
 -- Note
 
 -- declare handler
