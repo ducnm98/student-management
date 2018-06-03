@@ -90,12 +90,19 @@ router.get("/detail/:level/:academicYear/:classID", function(req, res, next) {
           points[Math.round(average.average())]++
         })
         console.log(points)
+        // let studentType = {
+        //   good: points.filter(points => points >= 8 & points <= 10),
+        //   normal: points.filter(points => points >= 6.5 & points < 8),
+        //   average: points.filter(points => points >= 5 & points < 6.5),
+        //   weak: points.filter(points => points >= 3 & points < 5),
+        //   retention: points.filter(points => points < 3 & points > 0)
+        // }
         let studentType = {
-          good: points.filter(points => points >= 8 & points <= 10),
-          normal: points.filter(points => points >= 6.5 & points < 8),
-          average: points.filter(points => points >= 5 & points < 6.5),
-          weak: points.filter(points => points >= 3 & points < 5),
-          retention: points.filter(points => points < 3 & points > 0)
+          good: points[10] + points[9] + points[8],
+          normal: points[6] + points[7],
+          average: points[5],
+          weak: points[3] + points[4],
+          retention: points[0] + points[1] + points[2]
         }
         console.log(studentType)
         res.render("report/classreport", {

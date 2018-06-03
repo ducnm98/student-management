@@ -91,11 +91,11 @@
                   radius : '55%',
                   center: ['50%', '60%'],
                   data:[
-                      {value:<%= studentType.good %>, name:'Giỏi'},
-                      {value:<%= studentType.normal %>, name:'Khá'},
-                      {value:<%= studentType.average %>, name:'Trung bình'},
-                      {value:<%= studentType.week %>, name:'Yếu'},
-                      {value:<%= studentType.retention %>, name:'Ở lại'}
+                      <% if (studentType.good != 0) {%>{value:'<%= studentType.good %>', name:'Giỏi'},<%}%>
+                      <% if (studentType.normal != 0) {%>{value:'<%= studentType.normal %>', name:'Khá'},<%}%>
+                      <% if (studentType.average != 0) {%>{value:'<%= studentType.average %>', name:'Trung bình'},<%}%>
+                      <% if (studentType.week != 0) {%>{value:'<%= studentType.week %>', name:'Yếu'},<%}%>
+                      <% if (studentType.retention != 0) {%>{value:'<%= studentType.retention %>', name:'Ở lại'},<%}%>
                   ]
               }
           ]
