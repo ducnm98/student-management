@@ -52,12 +52,14 @@
             <li>
               <a href="/room">Mượn Phòng</a>
             </li>
-            <li>
-              <a href="/room/approve">Kiểm duyệt phòng</a>
-            </li>
-            <li>
-              <a href="/room/return">Trả phòng</a>
-            </li>
+            <% if (role.approveRooms) { %> 
+              <li>
+                <a href="/room/approve">Kiểm duyệt phòng</a>
+              </li>
+              <li>
+                <a href="/room/return">Trả phòng</a>
+              </li>
+            <% } %>
           </ul>
         </li>
         <li>

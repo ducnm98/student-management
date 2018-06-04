@@ -42,7 +42,7 @@ function findAcademicYear(callback) {
 };
 
 router.get("/detail/:level/:academicYear/:classID", function(req, res, next) {
-  if (!req.isAuthenticated()) {
+  if (req.isAuthenticated()) {
     sequelize.query("CALL `findGrade` (:classID, :academicYear)", {
       replacements: {
         classID: req.params.classID,
@@ -111,6 +111,7 @@ router.get("/detail/:level/:academicYear/:classID", function(req, res, next) {
           academicYear: req.params.academicYear,
           col: col,
           points: points,
+          role: req.user.role,
           studentType: studentType,
         })
         
@@ -123,7 +124,9 @@ router.get("/detail/:level/:academicYear/:classID", function(req, res, next) {
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
-    res.render("report/index");
+    res.render("report/index", {
+      role: req.user.role,
+    });
   } else {
     res.redirect("/login");
   }
@@ -131,7 +134,9 @@ router.get("/", function(req, res, next) {
 
 router.get("/detail", function(req, res, next) {
   if (req.isAuthenticated()) {
-    res.render("report/report");
+    res.render("report/report", {
+      role: req.user.role,
+    });
   } else {
     res.redirect("/login");
   }
@@ -144,6 +149,7 @@ router.get("/detail/:level", function(req, res, next) {
       res.render("report/level", {
         khoi: req.params.level,
         academicYear: academicYear,
+        role: req.user.role,
         hasListOfClass: false,
       });
     });
@@ -168,6 +174,7 @@ router.get("/detail/:level/:academicYear", function(req, res, next) {
             academicYear: academicYear,
             listOfClass: listOfClass,
             hasListOfClass: true,
+            role: req.user.role,
           });
         });
     })

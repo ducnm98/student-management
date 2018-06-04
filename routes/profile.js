@@ -21,6 +21,7 @@ router.get("/", function(req, res, next) {
         res.render("profile/index", {
           isEmployee: false,
           profile: profile,
+          role: req.user.role,
         });
       }
     })

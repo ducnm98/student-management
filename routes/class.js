@@ -63,6 +63,7 @@ router.get("/:level", function(req, res, next) {
         khoi: req.params.level,
         academicYear: academicYear,
         hasListOfClass: false,
+        role: req.user.role,
       });
     });
   } else {
@@ -82,6 +83,7 @@ router.get("/:level/:academicYear", function(req, res, next) {
         findAcademicYear(academicYear => {
           res.render("class/level", {
             khoi: req.params.level,
+            role: req.user.role,
             year: req.params.academicYear,
             academicYear: academicYear,
             listOfClass: listOfClass,
@@ -111,6 +113,7 @@ router.get("/:level/:academicYear/:classID", function(req, res, next) {
         res.render("class/classDetail", {
           classDetail: classDetail,
           student: data,
+          role: req.user.role,
           year: parseInt(req.params.academicYear),
         })
       })
