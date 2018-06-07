@@ -38,6 +38,7 @@ router.post("/", function(req, res, next) {
         hasSubmit: true,
         recipientType: req.body.recipientType,
         registerDate: req.body.registerDate,
+        role: req.user.role,
         note: req.body.note,
         success: '',
       });
@@ -78,6 +79,7 @@ router.post("/register", function(req, res, next) {
         roomID: req.body.register,
         recipientID: req.user.personID,
         recipientType: req.body.recipientType,
+        role: req.user.role,
         rentalDate: req.body.registerDate,
         note: req.body.note,
       }
@@ -141,6 +143,7 @@ router.get("/", function(req, res, next) {
       registerDate: 'yyyy/mm/dd',
       recipientType: '',
       note: '',
+      role: req.user.role,
       success: '',
     });
   } else {
@@ -156,6 +159,7 @@ router.get("/success", (req, res, next) => {
       registerDate: 'yyyy/mm/dd',
       recipientType: '',
       note: '',
+      role: req.user.role,
       success: 'Your register has been successful registered, and waiting for approving',
     });
   } else {
@@ -172,6 +176,7 @@ router.get("/approve", (req, res, next) => {
       res.render("room/approve", {
         success: '',
         room: data,
+        role: req.user.role,
       });
     })
   } else {
@@ -187,6 +192,7 @@ router.get("/return", (req, res, next) => {
       console.log(data)
       res.render("room/return", {
         success: '',
+        role: req.user.role,
         room: data,
       });
     })

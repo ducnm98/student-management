@@ -133,10 +133,10 @@ CREATE TABLE `grades`(
     `studentID` VARCHAR(50) NOT NULL,
     `subjectID` VARCHAR(50) NOT NULL,
     `academicYearID` INT(4) NOT NULL,
-    `oralScore` FLOAT(2, 2),
-    `fifteenMinutesScore` FLOAT(2, 2),
-    `periodScore` FLOAT(2, 2),
-    `finalScore` FLOAT(2, 2),
+    `oralScore` FLOAT(4, 2),
+    `fifteenMinutesScore` FLOAT(4, 2),
+    `periodScore` FLOAT(4, 2),
+    `finalScore` FLOAT(4, 2),
     PRIMARY KEY (`gradeID`),
     CONSTRAINT fk_grades_students FOREIGN KEY (`studentID`) REFERENCES `students`(`studentID`),
     CONSTRAINT fk_grades_subjects FOREIGN KEY (`subjectID`) REFERENCES `subjects`(`subjectID`),
@@ -486,6 +486,16 @@ END
 DELIMITER ;
 
 DELIMITER $$
+CREATE PROCEDURE disapproveRoomInDate(roomRentalIDA INT(20))
+BEGIN 
+    SET AUTOCOMMIT = 0;
+    DELETE FROM `roomRentals`
+    WHERE `roomRentalID` = roomRentalIDA;
+END
+ $$
+DELIMITER ;
+
+DELIMITER $$
 CREATE PROCEDURE returnRoom(roomRentalIDA INT(20), returnDate DATETIME)
 BEGIN 
     SET AUTOCOMMIT = 0;
@@ -628,6 +638,31 @@ BEGIN
 
 END$$
 DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `createReport`(`subjectID` VARCHAR(50), `academicYearID` INT(4))
+BEGIN 
+    SELECT G.studentID, G.subjectID, G.oralScore, G.fifteenMinutesScore, G.periodScore, G.finalScore
+    FROM `grades` G
+    WHERE G.academicYearID = academicYearID
+    AND G.subjectID = subjectID;
+	
+    SELECT SUM(G.studentID)
+    FROM `grades` G
+    WHERE G.academicYearID = academicYearID
+    AND G.subjectID = subjectID
+    AND ((G.oralScore + G.fifteenMinutesScore + G.periodScore*2 + G.finalScore*3)/7 >= 7.5);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `insertGrade`(`gradeID` VARCHAR(50), `studentID` VARCHAR(50), `subjectID` VARCHAR(50), `academicYearID` INT(4), `oralScore` FLOAT(4, 2),`fifteenMinutesScore` FLOAT(4, 2),`periodScore` FLOAT(4, 2), `finalScore` FLOAT(4, 2))
+BEGIN 
+    INSERT INTO `grades`
+    VALUES (gradeID, studentID, subjectID, academicYearID, oralScore, fifteenMinutesScore, periodScore, finalScore);
+END$$
+DELIMITER ;
+
 
 -- Note
 
