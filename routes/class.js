@@ -50,7 +50,9 @@ function findAcademicYear(callback) {
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
-    res.render("class/index");
+    res.render("class/index", {
+      role: req.user.role,
+    });
   } else {
     res.redirect("/login");
   }

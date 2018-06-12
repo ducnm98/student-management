@@ -110,6 +110,7 @@ router.get("/detail/:level/:academicYear/:classID", function(req, res, next) {
           grade: grade,
           academicYear: req.params.academicYear,
           col: col,
+          role: req.user.role,
           points: points,
           role: req.user.role,
           studentType: studentType,

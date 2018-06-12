@@ -3,7 +3,7 @@ var sequelize = require("../config/db/sequelize");
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
-    res.render("role/index", {showRole: false});
+    res.render("role/index", {showRole: false, role: req.user.role});
   } else {
     res.redirect("/login");
   }
@@ -37,6 +37,7 @@ router.get("/:personID", (req, res, next) => {
             person: personInfo,
             roleInfo: roleInfo,
             col: col,
+            role: req.user.role,
             showRole: true
           })
         })

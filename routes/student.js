@@ -10,7 +10,9 @@ function findAcademicYear(callback) {
 
 router.get("/", function(req, res, next) {
   if (req.isAuthenticated()) {
-    res.render("student/index");
+    res.render("student/index", {
+      role: req.user.role,
+    });
   } else {
     res.redirect("/login");
   }
@@ -22,7 +24,8 @@ router.get("/find", function(req, res, next) {
       findAcademicYear((academicYear) => {
         res.render("student/find", {
           academicYear: academicYear,
-          haveResult: false
+          haveResult: false,
+          role: req.user.role,
         });
       });
     } else {
@@ -50,11 +53,13 @@ router.post("/find", function(req, res, next) {
               academicYear: academicYear,
               studentList: result,
               haveResult: true,
+              role: req.user.role,
             })
           } else {
             res.render("student/find", {
               academicYear: academicYear,
               haveResult: false,
+              role: req.user.role,
             });
           }
         })
