@@ -1,0 +1,70 @@
+-- DEADLOCK
+
+T1: start transaction;
+T1: set session transaction isolation level serializable;
+T2: set session transaction isolation level serializable;
+T2: start transaction;
+T1, T2: 
+SET @p0='2'; 
+SET @p1='2'; 
+SET @p2='d'; 
+SET @p3='2018-06-13 00:00:00.000000'; 
+SET @p4='a'; 
+
+T1: SELECT RR.roomID FROM `roomrentals` RR WHERE RR.roomID = @p0 AND DATEDIFF(RR.rentalDate, @p3) = 0;
+T2: SELECT RR.roomID FROM `roomrentals` RR WHERE RR.roomID = @p0 AND DATEDIFF(RR.rentalDate, @p3) = 0;
+T2: INSERT INTO `roomrentals` (`roomRentalID`, `roomID`, `recipientID`, `recipientType`, `rentalDate`, `approvalID`, `isReturned`, `returnDate`, `note`) VALUES (NULL, @p0, @p1, @p2, @p3, NULL, NULL, NULL, NULL);
+T1: INSERT INTO `roomrentals` (`roomRentalID`, `roomID`, `recipientID`, `recipientType`, `rentalDate`, `approvalID`, `isReturned`, `returnDate`, `note`) VALUES (NULL, @p0, @p1, @p2, @p3, NULL, NULL, NULL, NULL);
+
+
+-- PHANTOM
+T1: start transaction;
+T2: start transaction;
+T1: set session transaction isolation level read uncommitted;
+T2: set session transaction isolation level read uncommitted;
+T1, T2:
+SET @p5='1';
+SET @p6='8';
+T1: SELECT G.studentID, G.subjectID, G.oralScore, G.fifteenMinutesScore, G.periodScore, G.finalScore FROM `grades` G WHERE G.academicYearID = @p5 AND G.subjectID = @p6;
+T2: INSERT INTO `grades` (`gradeID`, `studentID`, `subjectID`, `academicYearID`, `oralScore`, `fifteenMinutesScore`, `periodScore`, `finalScore`) 
+VALUES ('202', '30', '8', '1', '7', '10', '7.75', '10');
+	
+T1: SELECT SUM(G.studentID) FROM `grades` G WHERE G.academicYearID = @p5 AND G.subjectID = @p6 AND ((G.oralScore + G.fifteenMinutesScore + G.periodScore*2 + G.finalScore*3)/7 >= 7.5);
+T1: SELECT G.studentID, G.subjectID, G.oralScore, G.fifteenMinutesScore, G.periodScore, G.finalScore FROM `grades` G WHERE G.academicYearID = @p5 AND G.subjectID = @p6;
+
+-- Uncommitted data
+T1: 
+SET @personID = '3';
+SET @dateOfBirth='2018-06-13 00:00:00.000000';
+SET @telephone='012345678';
+SET @address1='HCMC';
+SET @parentalTelephone='0123456789';
+SET @parentalName='TESTING';
+
+start transaction;
+set session transaction isolation level read uncommitted;
+UPDATE `persons`
+SET 
+`persons`.`dateOfBirth` = @dateOfBirth,
+`persons`.`telephone` = @telephone,
+`persons`.`address` = @address1
+ WHERE 
+`persons`.`personID` = @personID;
+ 
+UPDATE `students`
+ SET 
+`students`.`parentalTelephone` = @parentalTelephone,
+`students`.`parentalName` = @parentalName
+WHERE
+`students`.`studentID` = @personID;
+
+
+T2: 
+SET @personID='3';
+START TRANSACTION;
+set session transaction isolation level read uncommitted;
+SELECT * FROM persons INNER JOIN students ON persons.personID = students.studentID WHERE persons.personID = @personID;
+
+T1: rollback;
+T2: SELECT * FROM persons INNER JOIN students ON persons.personID = students.studentID WHERE persons.personID = @personID;
+
